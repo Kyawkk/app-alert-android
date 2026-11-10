@@ -4,6 +4,8 @@ An Android app that plays an alarm when a notification arrives from apps you pic
 
 Kotlin, Jetpack Compose, Material 3, minSdk 24.
 
+Website: https://kyawkk.github.io/app-alert-android/
+
 ## Features
 
 - Pick which apps trigger the alarm, each with its own sound and optional keyword and category filters

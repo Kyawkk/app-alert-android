@@ -108,11 +108,20 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
+          set -euo pipefail
           APK=$(ls dist/*.apk | head -n 1)
           cp "$APK" dist/app-alert-nightly.apk
-          gh release delete nightly --cleanup-tag --yes || true
-          gh release create nightly dist/app-alert-nightly.apk \
+
+          # remove the previous release and any leftover tag so the tag points at this commit
+          gh release delete nightly --yes || true
+          gh api -X DELETE "repos/$GH_REPO/git/refs/tags/nightly" || true
+
+          gh release create nightly \
             --target "${{ github.sha }}" \
             --prerelease \
             --title "Nightly build" \
             --notes "Latest build of main (${GITHUB_SHA::7}). Not a stable release."
+          gh release upload nightly dist/app-alert-nightly.apk --clobber
+
+          gh release view nightly --json tagName,isDraft,isPrerelease,assets \
+            --jq '{tagName, isDraft, isPrerelease, assets: [.assets[].name]}'

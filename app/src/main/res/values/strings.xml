@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">App Alert</string>
+    <string name="alarm_channel_name">Active alarm</string>
+    <string name="alarm_channel_description">Shown while an alarm is playing so you can stop it.</string>
+    <string name="alarm_notification_title">App Alert is ringing</string>
+    <string name="alarm_notification_stop">Stop</string>
+</resources>

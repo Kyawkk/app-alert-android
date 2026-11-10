@@ -34,8 +34,34 @@ jobs:
       - name: Lint
         run: ./gradlew lintDebug
 
-      - name: Build debug APK
-        run: ./gradlew assembleDebug
+      - name: Create throwaway test key
+        run: |
+          KEYSTORE="$RUNNER_TEMP/ci.jks"
+          PASS=$(openssl rand -hex 16)
+          echo "::add-mask::$PASS"
+          keytool -genkeypair -keystore "$KEYSTORE" -alias ci \
+            -storepass "$PASS" -keypass "$PASS" \
+            -keyalg RSA -keysize 2048 -validity 3650 -dname "CN=App Alert CI"
+          echo "SIGNING_KEYSTORE_PATH=$KEYSTORE" >> "$GITHUB_ENV"
+          echo "SIGNING_STORE_PASSWORD=$PASS" >> "$GITHUB_ENV"
+          echo "SIGNING_KEY_ALIAS=ci" >> "$GITHUB_ENV"
+          echo "SIGNING_KEY_PASSWORD=$PASS" >> "$GITHUB_ENV"
+
+      - name: Build release APK (R8 shrunk)
+        run: ./gradlew assembleRelease
+
+      - name: Release size report
+        run: |
+          APK=$(ls app/build/outputs/apk/release/*.apk | head -n 1)
+          {
+            echo "### Release APK size"
+            echo "\`$(basename "$APK")\`: **$(du -h "$APK" | cut -f1)**"
+            echo
+            echo "Largest entries (compressed bytes):"
+            echo '```'
+            unzip -lv "$APK" | awk 'NR>3 {print $3, $8}' | sort -n -r | head -15
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload reports
         if: always()
@@ -47,9 +73,9 @@ jobs:
             app/build/test-results/
           if-no-files-found: ignore
 
-      - name: Upload debug APK
+      - name: Upload release APK (test-signed)
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: app-release-apk
+          path: app/build/outputs/apk/release/*.apk
           retention-days: 7

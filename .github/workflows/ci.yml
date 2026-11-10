@@ -59,7 +59,10 @@ jobs:
           echo "SIGNING_KEY_PASSWORD=$KEY_PASSWORD" >> "$GITHUB_ENV"
 
       - name: Build release APK (R8 shrunk)
-        run: ./gradlew assembleRelease
+        run: >
+          ./gradlew assembleRelease
+          -PappVersionName=1.0.${{ github.run_number }}
+          -PappVersionCode=${{ github.run_number }}
 
       - name: Release size report
         run: |
@@ -91,7 +94,7 @@ jobs:
           path: app/build/outputs/apk/release/*.apk
           retention-days: 7
 
-  nightly:
+  publish:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
@@ -103,25 +106,21 @@ jobs:
           name: app-release-apk
           path: dist
 
-      - name: Publish rolling nightly release
+      - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
+          TAG="v1.0.${{ github.run_number }}"
           APK=$(ls dist/*.apk | head -n 1)
-          cp "$APK" dist/app-alert-nightly.apk
+          cp "$APK" "dist/app-alert-$TAG.apk"
 
-          # remove the previous release and any leftover tag so the tag points at this commit
-          gh release delete nightly --yes || true
-          gh api -X DELETE "repos/$GH_REPO/git/refs/tags/nightly" || true
-
-          gh release create nightly \
+          gh release create "$TAG" "dist/app-alert-$TAG.apk" \
             --target "${{ github.sha }}" \
-            --prerelease \
-            --title "Nightly build" \
-            --notes "Latest build of main (${GITHUB_SHA::7}). Not a stable release."
-          gh release upload nightly dist/app-alert-nightly.apk --clobber
+            --latest \
+            --title "App Alert $TAG" \
+            --generate-notes
 
-          gh release view nightly --json tagName,isDraft,isPrerelease,assets \
+          gh release view "$TAG" --json tagName,isDraft,isPrerelease,assets \
             --jq '{tagName, isDraft, isPrerelease, assets: [.assets[].name]}'

@@ -34,18 +34,29 @@ jobs:
       - name: Lint
         run: ./gradlew lintDebug
 
-      - name: Create throwaway test key
+      - name: Prepare signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
           KEYSTORE="$RUNNER_TEMP/ci.jks"
-          PASS=$(openssl rand -hex 16)
-          echo "::add-mask::$PASS"
-          keytool -genkeypair -keystore "$KEYSTORE" -alias ci \
-            -storepass "$PASS" -keypass "$PASS" \
-            -keyalg RSA -keysize 2048 -validity 3650 -dname "CN=App Alert CI"
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE"
+          else
+            STORE_PASSWORD=$(openssl rand -hex 16)
+            KEY_PASSWORD="$STORE_PASSWORD"
+            KEY_ALIAS=ci
+            keytool -genkeypair -keystore "$KEYSTORE" -alias "$KEY_ALIAS" \
+              -storepass "$STORE_PASSWORD" -keypass "$KEY_PASSWORD" \
+              -keyalg RSA -keysize 2048 -validity 3650 -dname "CN=App Alert CI"
+          fi
+          echo "::add-mask::$STORE_PASSWORD"
           echo "SIGNING_KEYSTORE_PATH=$KEYSTORE" >> "$GITHUB_ENV"
-          echo "SIGNING_STORE_PASSWORD=$PASS" >> "$GITHUB_ENV"
-          echo "SIGNING_KEY_ALIAS=ci" >> "$GITHUB_ENV"
-          echo "SIGNING_KEY_PASSWORD=$PASS" >> "$GITHUB_ENV"
+          echo "SIGNING_STORE_PASSWORD=$STORE_PASSWORD" >> "$GITHUB_ENV"
+          echo "SIGNING_KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_ENV"
+          echo "SIGNING_KEY_PASSWORD=$KEY_PASSWORD" >> "$GITHUB_ENV"
 
       - name: Build release APK (R8 shrunk)
         run: ./gradlew assembleRelease
@@ -79,3 +90,29 @@ jobs:
           name: app-release-apk
           path: app/build/outputs/apk/release/*.apk
           retention-days: 7
+
+  nightly:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: app-release-apk
+          path: dist
+
+      - name: Publish rolling nightly release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          APK=$(ls dist/*.apk | head -n 1)
+          cp "$APK" dist/app-alert-nightly.apk
+          gh release delete nightly --cleanup-tag --yes || true
+          gh release create nightly dist/app-alert-nightly.apk \
+            --target "${{ github.sha }}" \
+            --prerelease \
+            --title "Nightly build" \
+            --notes "Latest build of main (${GITHUB_SHA::7}). Not a stable release."

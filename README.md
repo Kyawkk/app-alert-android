@@ -67,7 +67,7 @@ No `QUERY_ALL_PACKAGES` and no storage permission (custom sounds use the documen
 
 ## Releasing
 
-CI runs unit tests, lint and a release build on every push and pull request. Pushing a version tag builds a signed APK and AAB and publishes a GitHub Release:
+CI runs unit tests, lint and a release build on every push and pull request. Each push to `main` also refreshes a rolling "Nightly build" pre-release with the latest APK. Pushing a version tag builds a signed APK and AAB and publishes a GitHub Release:
 
 ```bash
 git tag v1.0.0

@@ -1,12 +1,5 @@
 package com.kyawzinlinn.app.alert.feature.alarm.domain
 
-/**
- * User-configurable alarm behaviour.
- *
- * [durationSeconds] is how long one burst of the sound plays (looping). With [repeatEnabled]
- * the burst is repeated [repeatCount] more times, separated by [repeatIntervalSeconds].
- * [volumePercent] is relative to the device's alarm volume; the system volume is never changed.
- */
 data class AlarmSettings(
     val soundUri: String? = null, // null = default system alarm sound
     val volumePercent: Int = 80,

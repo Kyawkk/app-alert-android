@@ -34,7 +34,6 @@ private val ScopeOptions = listOf(
     KeywordScope.CONTENT to "Text only",
 )
 
-/** Optional rules. With no keywords and no categories every notification of the app rings. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NotificationFiltersCard(

@@ -16,12 +16,10 @@ enum class SkipReason {
 }
 
 sealed interface TriggerDecision {
-    /** [soundUri] is the per-app override, or null to use the global sound. */
     data class Trigger(val soundUri: String?) : TriggerDecision
     data class Skip(val reason: SkipReason) : TriggerDecision
 }
 
-/** Pure decision logic: every gate in the order the product defines. Duplicate/cooldown is last. */
 class ShouldTriggerAlarmUseCase(
     private val throttle: AlertThrottle,
     private val timeProvider: TimeProvider,

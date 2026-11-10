@@ -27,7 +27,6 @@ import com.kyawzinlinn.app.alert.feature.applications.presentation.components.Ap
 
 private enum class ListMode { Loading, Failed, Content }
 
-/** Searchable list of installed apps. Reused by the Applications tab and the onboarding step. */
 @Composable
 fun ApplicationsScreen(
     state: ApplicationsUiState,

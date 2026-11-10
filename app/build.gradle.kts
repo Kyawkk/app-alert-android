@@ -14,15 +14,13 @@ android {
         applicationId = "com.kyawzinlinn.app.alert"
         minSdk = 24
         targetSdk = 37
-        // CI passes these for tagged releases (see .github/workflows/release.yml).
         versionCode = providers.gradleProperty("appVersionCode").map(String::toInt).getOrElse(1)
         versionName = providers.gradleProperty("appVersionName").getOrElse("1.0")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    // Release signing comes from environment variables so no secret is ever committed.
-    // Without them (local or contributor builds) the release APK is simply left unsigned.
+    // signing config comes from env vars; without them the release APK stays unsigned
     val releaseKeystore = System.getenv("SIGNING_KEYSTORE_PATH")
     signingConfigs {
         if (releaseKeystore != null) {
@@ -50,7 +48,7 @@ android {
             }
         }
     }
-    // The UI is English-only, so drop the translations bundled with AndroidX/Material libraries.
+    // english-only UI, so drop translations bundled with libraries
     androidResources {
         localeFilters += listOf("en")
     }

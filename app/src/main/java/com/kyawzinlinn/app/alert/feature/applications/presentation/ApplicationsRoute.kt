@@ -23,10 +23,6 @@ import com.kyawzinlinn.app.alert.core.ui.WindowWidth
 import com.kyawzinlinn.app.alert.core.ui.rememberSoundPickerActions
 import com.kyawzinlinn.app.alert.core.ui.rememberWindowWidth
 
-/**
- * Applications tab. On compact/medium screens a tap on "Edit" opens a detail destination;
- * on expanded screens the list and the app's configuration sit side by side.
- */
 @Composable
 fun ApplicationsRoute(
     factory: AppViewModelFactory,
@@ -35,7 +31,6 @@ fun ApplicationsRoute(
 ) {
     val viewModel: ApplicationsViewModel = viewModel(factory = factory)
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    // Apps may be installed/uninstalled while we are in the background.
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.onAction(ApplicationsAction.Refresh) }
     val isExpanded = rememberWindowWidth() == WindowWidth.Expanded
     var selectedPackage by rememberSaveable { mutableStateOf<String?>(null) }

@@ -11,7 +11,6 @@ import androidx.core.app.NotificationManagerCompat
 import com.kyawzinlinn.app.alert.MainActivity
 import com.kyawzinlinn.app.alert.R
 
-/** Shows the ongoing "App Alert is ringing" notification with a Stop action. */
 class AlarmNotifier(context: Context) {
     private val context = context.applicationContext
     private val manager = NotificationManagerCompat.from(this.context)
@@ -42,7 +41,6 @@ class AlarmNotifier(context: Context) {
         try {
             manager.notify(NOTIFICATION_ID, notification)
         } catch (e: SecurityException) {
-            // Permission revoked between the check and the call; nothing else to do.
         }
     }
 

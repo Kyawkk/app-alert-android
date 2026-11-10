@@ -27,7 +27,6 @@ class OnboardingViewModel(
         OnboardingUiState(currentStep, permissions, selectedCount)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), OnboardingUiState())
 
-    /** @param onFinished called after completion has been stored. */
     fun onAction(action: OnboardingAction, onFinished: () -> Unit = {}) {
         val all = OnboardingStep.entries
         when (action) {

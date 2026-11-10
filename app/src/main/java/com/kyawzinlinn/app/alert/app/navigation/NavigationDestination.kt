@@ -2,7 +2,6 @@ package com.kyawzinlinn.app.alert.app.navigation
 
 import android.net.Uri
 
-/** Routes. Only identifiers travel through navigation; screens load their own data. */
 sealed class NavigationDestination(val route: String) {
     data object Onboarding : NavigationDestination("onboarding")
     data object Home : NavigationDestination("home")

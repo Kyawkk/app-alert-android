@@ -21,7 +21,6 @@ class PackageManagerInstalledAppsRepository(
     @Volatile
     private var cache: List<InstalledApp>? = null
 
-    /** Labels of apps outside the launcher list (or uninstalled), so repeated lookups cost nothing. */
     private val fallbackLabels = ConcurrentHashMap<String, String>()
 
     override suspend fun getInstalledApps(forceRefresh: Boolean): List<InstalledApp> = withContext(dispatcher) {

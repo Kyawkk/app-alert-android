@@ -15,7 +15,6 @@ class ObserveSelectedApplicationsUseCase(private val repository: AppRulesReposit
 class UpdateApplicationSelectionUseCase(private val repository: AppRulesRepository) {
     suspend operator fun invoke(packageName: String, selected: Boolean) {
         if (selected) {
-            // Re-selecting keeps any previously configured rule.
             val existing = repository.observeRules().first().firstOrNull { it.packageName == packageName }
             repository.upsert(existing?.copy(enabled = true) ?: AppRule(packageName))
         } else {
@@ -25,7 +24,6 @@ class UpdateApplicationSelectionUseCase(private val repository: AppRulesReposito
 }
 
 class UpdateAppRuleUseCase(private val repository: AppRulesRepository) {
-    /** Applies [transform] atomically, so rapid edits can never overwrite each other. */
     suspend operator fun invoke(packageName: String, transform: (AppRule) -> AppRule) =
         repository.update(packageName) { current ->
             val updated = transform(current)

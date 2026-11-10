@@ -16,7 +16,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Dimens
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 
-/** One history/alert row: app icon, name, outcome (as text, not only color) and relative time. */
 @Composable
 fun AlertListItem(
     alert: AlertUiModel,

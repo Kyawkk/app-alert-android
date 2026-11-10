@@ -3,7 +3,6 @@ package com.kyawzinlinn.app.alert.core.designsystem.preview
 import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 
-/** Multi-preview: light, dark and several font scales. */
 @PreviewLightDark
 @PreviewFontScale
 annotation class AppAlertPreviews

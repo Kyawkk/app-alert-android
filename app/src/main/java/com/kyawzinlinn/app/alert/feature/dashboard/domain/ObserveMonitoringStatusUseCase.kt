@@ -12,10 +12,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 
-/**
- * Never reports "active" unless notification access is granted AND the listener is bound.
- * A once-a-minute tick (only while collected) lets quiet-hours boundaries update the status.
- */
 class ObserveMonitoringStatusUseCase(
     private val settings: SettingsRepository,
     private val rules: AppRulesRepository,

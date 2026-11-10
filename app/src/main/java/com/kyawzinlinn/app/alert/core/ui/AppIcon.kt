@@ -19,10 +19,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.Dp
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Dimens
 
-/**
- * Application icon. Shows the first letter of the label as a placeholder and cross-fades to the real
- * icon once it is loaded, so scrolling a long list never pops.
- */
 @Composable
 fun AppIcon(
     packageName: String,

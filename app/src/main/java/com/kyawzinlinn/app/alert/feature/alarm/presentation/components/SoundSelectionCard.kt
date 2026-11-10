@@ -18,7 +18,6 @@ import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 import com.kyawzinlinn.app.alert.core.ui.SoundPickerActions
 
-/** Shows the current sound and lets the user pick a system sound or an audio file. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SoundSelectionCard(

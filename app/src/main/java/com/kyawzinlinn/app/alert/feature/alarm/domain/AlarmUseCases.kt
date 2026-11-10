@@ -14,7 +14,6 @@ class UpdateAlarmSettingsUseCase(private val repository: AlarmSettingsRepository
     }
 }
 
-/** Starts playback from the stored settings; [soundOverride] is used for per-app sounds and tests. */
 class StartAlarmPlaybackUseCase(
     private val repository: AlarmSettingsRepository,
     private val player: AlarmPlayer,
@@ -38,12 +37,10 @@ class StopAlarmPlaybackUseCase(private val player: AlarmPlayer) {
     operator fun invoke() = player.stop()
 }
 
-/** Validates a picked sound before it becomes the default alarm sound. */
 class SelectAlarmSoundUseCase(
     private val inspector: SoundInspector,
     private val update: UpdateAlarmSettingsUseCase,
 ) {
-    /** @return false when the sound is unusable and nothing was saved. */
     suspend operator fun invoke(uri: String?): Boolean {
         if (uri != null && !inspector.verifyAndRetainAccess(uri)) return false
         update { it.copy(soundUri = uri) }
@@ -59,7 +56,6 @@ class GetSoundTitleUseCase(private val inspector: SoundInspector) {
     suspend operator fun invoke(uri: String?): String = inspector.titleOf(uri)
 }
 
-/** Checks that a sound can be played (and keeps access to picked files) without saving anything. */
 class VerifySoundUseCase(private val inspector: SoundInspector) {
     suspend operator fun invoke(uri: String): Boolean = inspector.verifyAndRetainAccess(uri)
 }

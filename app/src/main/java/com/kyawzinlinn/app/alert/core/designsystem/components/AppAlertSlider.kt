@@ -17,10 +17,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 
-/**
- * Integer slider with a label and a formatted value. While dragging only local state changes;
- * [onValueChangeFinished] persists the final value, so storage is written once per gesture.
- */
 @Composable
 fun AppAlertSlider(
     label: String,

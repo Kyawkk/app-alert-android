@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class AppRootViewModel(observeAppSettings: ObserveAppSettingsUseCase) : ViewModel() {
-    /** null while the first read of the preferences is in flight. */
     val onboardingCompleted: StateFlow<Boolean?> = observeAppSettings()
         .map { it.onboardingCompleted }
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)

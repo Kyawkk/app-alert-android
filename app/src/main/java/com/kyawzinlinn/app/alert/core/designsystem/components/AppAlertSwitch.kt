@@ -18,10 +18,6 @@ import androidx.compose.ui.unit.dp
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Dimens
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 
-/**
- * A whole row that toggles: title, optional supporting text and a switch.
- * The row is the single accessibility target (Role.Switch) with a 48dp minimum height.
- */
 @Composable
 fun AppAlertSwitchRow(
     title: String,
@@ -55,7 +51,6 @@ fun AppAlertSwitchRow(
                 )
             }
         }
-        // The row handles the click; the switch itself is purely visual.
         Switch(checked = checked, onCheckedChange = null, enabled = enabled)
     }
 }

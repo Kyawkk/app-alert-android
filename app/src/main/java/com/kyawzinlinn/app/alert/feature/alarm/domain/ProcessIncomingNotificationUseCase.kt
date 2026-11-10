@@ -9,7 +9,6 @@ import android.util.Log
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 
-/** Full workflow for one incoming notification: decide, play, and record the outcome. */
 class ProcessIncomingNotificationUseCase(
     private val appRules: AppRulesRepository,
     private val settings: SettingsRepository,
@@ -20,7 +19,6 @@ class ProcessIncomingNotificationUseCase(
     private val timeProvider: TimeProvider,
 ) {
     suspend operator fun invoke(event: NotificationEvent) {
-        // Unselected apps exit here without touching settings, history or audio.
         val rule = appRules.getRule(event.packageName) ?: return
         val appSettings = settings.observe().first()
         val cooldown = alarmSettings.observe().first().cooldownSeconds
@@ -43,7 +41,6 @@ class ProcessIncomingNotificationUseCase(
         }
     }
 
-    /** The alarm matters more than its log entry: a failing history write must never propagate. */
     private suspend fun record(packageName: String, outcome: AlertOutcome) {
         try {
             history.record(packageName, outcome, timeProvider.nowMillis())

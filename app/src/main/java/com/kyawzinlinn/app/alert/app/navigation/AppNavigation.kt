@@ -20,7 +20,6 @@ import com.kyawzinlinn.app.alert.app.di.AppViewModelFactory
 import com.kyawzinlinn.app.alert.core.ui.WindowWidth
 import com.kyawzinlinn.app.alert.core.ui.rememberWindowWidth
 
-/** Root composable: waits for the stored onboarding state, then shows the navigation scaffold. */
 @Composable
 fun AppAlertApp(factory: AppViewModelFactory) {
     val rootViewModel: AppRootViewModel = viewModel(factory = factory)

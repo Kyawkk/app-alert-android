@@ -51,23 +51,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
-/**
- * Manual dependency injection: one object graph for the process, created in the Application.
- * Plain constructor injection keeps the build free of annotation processing beyond Room.
- */
 class AppContainer(context: Context) {
     private val appContext = context.applicationContext
 
     val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     val timeProvider: TimeProvider = SystemTimeProvider()
 
-    // Core
     private val database: AppAlertDatabase by lazy { AppAlertDatabase.create(appContext) }
     val listenerConnection = ListenerConnection()
     val permissionStatusSource: PermissionStatusSource = AndroidPermissionStatusSource(appContext)
     val appIconLoader = AppIconLoader(appContext)
 
-    // Data
     val settingsRepository: SettingsRepository = DataStoreSettingsRepository(appContext.appAlertDataStore)
     val alarmSettingsRepository: AlarmSettingsRepository =
         DataStoreAlarmSettingsRepository(appContext.appAlertDataStore)
@@ -82,7 +76,6 @@ class AppContainer(context: Context) {
     val alarmPlayer: AlarmPlayer =
         AlarmPlaybackController(appContext, applicationScope, AlarmNotifier(appContext))
 
-    // Use cases: alarm
     val observeAlarmSettings = ObserveAlarmSettingsUseCase(alarmSettingsRepository)
     val updateAlarmSettings = UpdateAlarmSettingsUseCase(alarmSettingsRepository)
     val startAlarmPlayback = StartAlarmPlaybackUseCase(alarmSettingsRepository, alarmPlayer)
@@ -92,14 +85,12 @@ class AppContainer(context: Context) {
     val getSoundTitle = GetSoundTitleUseCase(soundInspector)
     val verifySound = VerifySoundUseCase(soundInspector)
 
-    // Use cases: applications
     val getInstalledApplications = GetInstalledApplicationsUseCase(installedAppsRepository)
     val observeSelectedApplications by lazy { ObserveSelectedApplicationsUseCase(appRulesRepository) }
     val updateApplicationSelection by lazy { UpdateApplicationSelectionUseCase(appRulesRepository) }
     val updateAppRule by lazy { UpdateAppRuleUseCase(appRulesRepository) }
     val getAppLabel = GetAppLabelUseCase(installedAppsRepository)
 
-    // Use cases: settings / history / dashboard
     val observeAppSettings = ObserveAppSettingsUseCase(settingsRepository)
     val setMonitoringEnabled = SetMonitoringEnabledUseCase(settingsRepository)
     val updateQuietHours = UpdateQuietHoursUseCase(settingsRepository)
@@ -112,7 +103,6 @@ class AppContainer(context: Context) {
         )
     }
 
-    // The notification pipeline
     private val shouldTriggerAlarm = ShouldTriggerAlarmUseCase(AlertThrottle(), timeProvider)
     val processIncomingNotification by lazy {
         ProcessIncomingNotificationUseCase(

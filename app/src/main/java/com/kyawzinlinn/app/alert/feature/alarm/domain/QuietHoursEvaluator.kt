@@ -3,10 +3,7 @@ package com.kyawzinlinn.app.alert.feature.alarm.domain
 import com.kyawzinlinn.app.alert.feature.settings.domain.QuietHours
 
 object QuietHoursEvaluator {
-    /**
-     * @param dayOfWeek ISO day, 1 = Monday ... 7 = Sunday
-     * A window whose end is earlier than its start spans midnight and belongs to the day it starts on.
-     */
+    // a window that ends before it starts crosses midnight and belongs to the day it starts on
     fun isQuiet(quietHours: QuietHours, dayOfWeek: Int, minuteOfDay: Int): Boolean {
         if (!quietHours.enabled || quietHours.days.isEmpty()) return false
         val start = quietHours.startMinuteOfDay

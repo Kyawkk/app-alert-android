@@ -3,7 +3,6 @@ package com.kyawzinlinn.app.alert.feature.alarm.domain
 import com.kyawzinlinn.app.alert.feature.applications.domain.AppRule
 import com.kyawzinlinn.app.alert.feature.applications.domain.KeywordScope
 
-/** Applies the per-application filters (keywords and categories) to a notification. */
 object NotificationMatcher {
     fun matches(rule: AppRule, event: NotificationEvent): Boolean =
         matchesCategory(rule, event) && matchesKeywords(rule, event)

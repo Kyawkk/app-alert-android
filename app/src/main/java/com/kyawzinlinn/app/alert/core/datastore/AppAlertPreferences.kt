@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import java.io.IOException
 
-/** Single DataStore instance for the process (must be declared once at top level). */
 val Context.appAlertDataStore: DataStore<Preferences> by preferencesDataStore(name = "app_alert_preferences")
 
 object PreferenceKeys {
@@ -34,6 +33,5 @@ object PreferenceKeys {
     val COOLDOWN = intPreferencesKey("cooldown_seconds")
 }
 
-/** A corrupt/unreadable file must not crash the app: fall back to defaults. */
 fun DataStore<Preferences>.safeData(): Flow<Preferences> =
     data.catch { if (it is IOException) emit(emptyPreferences()) else throw it }

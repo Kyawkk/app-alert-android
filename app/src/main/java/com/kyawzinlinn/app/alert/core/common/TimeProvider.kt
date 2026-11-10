@@ -2,11 +2,9 @@ package com.kyawzinlinn.app.alert.core.common
 
 import java.util.Calendar
 
-/** Source of wall-clock information. Abstracted so time-dependent rules can be unit tested. */
 interface TimeProvider {
     fun nowMillis(): Long
 
-    /** ISO day of week: 1 = Monday ... 7 = Sunday, in the device time zone. */
     fun currentDayOfWeek(): Int
 
     fun currentMinuteOfDay(): Int

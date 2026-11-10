@@ -30,15 +30,12 @@ class AndroidSoundInspector(context: Context) : SoundInspector {
         }
     }
 
-    /** Files chosen with the document picker need a persistable grant to survive reboots. */
     private fun retainAccess(uri: Uri) {
         if (uri.scheme != "content") return
         try {
             context.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
         } catch (e: SecurityException) {
-            // Not a document URI (e.g. a system ringtone): no grant is needed or available.
         } catch (e: IllegalArgumentException) {
-            // Same: provider does not support persistable permissions.
         }
     }
 

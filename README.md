@@ -1,162 +1,104 @@
 # App Alert
 
-App Alert plays an alarm or ringtone when a notification arrives from apps you choose (Viber, WhatsApp, Telegram, …). It is built for the moments you can't watch your phone: asleep, away from the desk, or in a meeting you can't check.
+An Android app that plays an alarm when a notification arrives from apps you pick, for the times you can't watch your phone. Everything stays on the device. Message text is only read to apply your filters and is never stored or logged.
 
-* **Platform:** Android 7.0+ (minSdk 24), Kotlin, Jetpack Compose, Material 3
-* **Privacy:** everything stays on the device. Message text is read only to apply your filters, is never stored, and never appears in logs.
-* **Weight:** no polling, no wake locks, no always-running service. It reacts to system callbacks.
+Kotlin, Jetpack Compose, Material 3, minSdk 24.
 
 ## Features
 
-| Area | What you get |
-|---|---|
-| Monitoring | Global switch, per-app switch, honest status (never "active" unless Android has really bound the listener) |
-| Apps | Searchable list of installed apps, selected apps first, per-app sound and filters |
-| Filters | Keywords (title, text or both) and notification categories (messages, calls, email, …) |
-| Alarm | Sound (system or your own audio file), volume, duration, repeat count/interval, vibration, cooldown, test button |
-| Noise control | Duplicate detection, per-app cooldown, group-summary/ongoing notifications ignored (calls excepted) |
-| Schedule | Quiet hours with start/end and weekdays, including windows that cross midnight |
-| History | Last 30 days / 500 entries, outcome only (played, failed, skipped), clearable |
-| Onboarding | 8-step setup: access, optional Do Not Disturb, first app, sound, test |
-| Adaptive UI | Bottom bar on phones, navigation rail on tablets, side-by-side apps + settings on large screens, light/dark |
+- Pick which apps trigger the alarm, each with its own sound and optional keyword and category filters
+- Custom sound (system ringtone or your own audio file), volume, duration, repeats, vibration
+- Quiet hours with weekdays, including windows that cross midnight
+- Duplicate detection and a per-app cooldown
+- A monitoring status that is only "active" when Android has really bound the listener
+- Alert history (outcome only, last 30 days)
+- Phone and tablet layouts, light and dark theme
 
-## Getting started
+## Run it
 
-1. Open the project in a recent Android Studio (it uses AGP 9.x and Gradle 9.x, see `gradle/libs.versions.toml`).
-2. Run the `app` configuration on a **physical device** if you can. Notification delivery, battery management and Do Not Disturb behave differently on emulators.
-3. Follow the onboarding. Android requires you to enable **Notification access** yourself (Settings → Notifications → Device & app notifications → App Alert). The app can open that screen but can never switch it on.
-4. Select an app, then send yourself a notification from it. You should hear the alarm.
+Open the project in a recent Android Studio and run the `app` configuration, ideally on a physical device. Android requires you to turn on Notification access yourself (Settings > Notifications > Device & app notifications). The onboarding opens that screen for you.
 
 ```bash
-./gradlew testDebugUnitTest          # JVM unit tests
-./gradlew connectedDebugAndroidTest  # Room, DataStore and Compose UI tests (device/emulator)
-./gradlew assembleRelease            # release build
+./gradlew testDebugUnitTest          # unit tests
+./gradlew connectedDebugAndroidTest  # Room, DataStore and UI tests (needs a device)
+./gradlew assembleRelease            # R8-shrunk release build
 ```
 
 ## How it works
 
 ```text
-Android system
-   │  onNotificationPosted
-   ▼
-AppAlertNotificationListenerService      core/notifications   (thin: builds a NotificationEvent)
-   │  1. own package? → ignore   2. package not selected? → ignore (in-memory check, no allocation)
-   ▼
-ProcessIncomingNotificationUseCase       feature/alarm/domain
-   │  ShouldTriggerAlarmUseCase decides, in this order:
-   │  monitoring on → app selected → app enabled → real new message → quiet hours
-   │  → filters match → not a duplicate → not in cooldown
-   ▼
-StartAlarmPlaybackUseCase → AlarmPlayer  (AlarmPlaybackController: MediaPlayer + vibration,
-   │                                      USAGE_ALARM, one alarm at a time)
-   ▼
-AlertHistoryRepository                   outcome only, bounded, failures never block the alarm
+NotificationListenerService      builds a NotificationEvent, ignores unselected apps
+  -> ProcessIncomingNotificationUseCase
+       monitoring on > app selected > app enabled > not a summary/ongoing
+       > quiet hours > filters > duplicate > cooldown
+  -> AlarmPlaybackController     MediaPlayer + vibration, one alarm at a time
+  -> history                     outcome only; a failed write never blocks the alarm
 ```
 
-Design decisions worth knowing:
-
-* **Package names identify apps**, never display names. Nothing app-specific is hard-coded.
-* **Duplicates:** Android re-posts the same notification key for updates. The same key with the same title/text/time within 10 minutes counts as one event; changed content counts as a new message.
-* **Duplicate/cooldown state lives in memory.** After a process restart the worst case is one extra alarm, never a missed one.
-* **Volume** is a percentage of the device's alarm volume. The system volume is never changed.
-* **Alarm length is always bounded** (duration × repeats) and can be stopped from the app or the "Stop" notification.
-* **Reliability:** the listener requests a rebind when disconnected, `MainActivity.onResume` re-checks permissions and rebinds if access is granted but the service is not connected, and the dashboard shows exactly which of those conditions is failing.
+- Apps are identified by package name.
+- Duplicate and cooldown state is kept in memory. After a restart the worst case is one extra alarm, never a missed one.
+- Volume is relative to the device's alarm volume. System volume is never changed.
+- Every alarm has a bounded length and can be stopped from the app or its notification.
 
 ## Architecture
 
-Clean Architecture with feature folders in one Gradle module. Dependencies point inward: `presentation → domain ← data`.
+One Gradle module, feature folders, dependencies pointing inward (`presentation -> domain <- data`).
 
 ```text
-app/src/main/java/com/kyawzinlinn/app/alert/
-├── AppAlertApplication.kt, MainActivity.kt
-├── app/                  AppContainer (manual DI), navigation, ViewModel factory
-├── core/
-│   ├── common/           TimeProvider, launchCatching
-│   ├── designsystem/     theme (colors, type, shapes, spacing), reusable components, preview helpers
-│   ├── database/         Room: history + per-app rules
-│   ├── datastore/        Preferences keys and safe reads
-│   ├── notifications/    NotificationListenerService, listener connection state
-│   ├── audio/            playback controller, sound inspector, "Stop" notification
-│   ├── permissions/      permission state + settings intents
-│   └── ui/               shared composables (app icon, window width, sound pickers, formatting)
-└── feature/
-    ├── dashboard/  applications/  alarm/  history/  settings/  onboarding/
-    └── each: domain/ (models, repository interfaces, use cases) · data/ · presentation/
+app/            manual DI (AppContainer), navigation
+core/           common, designsystem, database, datastore, notifications, audio, permissions, ui
+feature/        dashboard, applications, alarm, history, settings, onboarding
+                each with domain/, data/, presentation/
 ```
 
-Conventions:
-
-* Every screen has `UiState` (immutable), `Action` (sealed), a `ViewModel` exposing `StateFlow`, a stateless `Screen` and a small `Route` that wires the ViewModel. Screens are previewable with sample data and never touch real notification access.
-* State is collected with `collectAsStateWithLifecycle()`; storage writes go through `launchCatching`, so a failing write is logged instead of crashing.
-* Read-modify-write operations (alarm settings, quiet hours, app rules) are atomic in the repository, so rapid taps cannot overwrite each other.
-* Storage: **DataStore** for preferences (switches, sound, volume, quiet hours) and **Room** for structured data (history, per-app rules). History is limited to 30 days and 500 entries.
-* Manual constructor injection through `AppContainer` keeps the build free of extra annotation processing (only Room uses KSP). Moving to Hilt later only touches `app/`.
-
-## Design system
-
-Everything visual lives in `core/designsystem`:
-
-* **Color:** semantic Material 3 scheme (light/dark) plus `AppAlertTheme.extendedColors` for success and warning. Composables never use raw colors.
-* **Spacing:** the `Spacing` scale (4–48dp) and `Dimens` (48dp minimum touch target, 840dp readable width).
-* **Components:** `AppAlertCard`, `AppAlertButton`, `AppAlertSwitchRow`, `AppAlertSlider`, `AppAlertDialog`, `AppAlertEmptyState`, `AppAlertSectionHeader`, `AppAlertPermissionCard`, `AppAlertTopBar`.
-* **Motion:** short, subtle and consistent. Tabs fade through; detail screens slide in; status text, app icons, list items and the Test/Stop button cross-fade or animate placement. Durations are short and honour the system animation scale. No infinite animations.
-* **Accessibility:** state is always text plus icon, never color alone; switch rows are single `Role.Switch` targets; the monitoring status is a polite live region; fonts scale; previews cover light, dark and large font scales.
+Each screen has a `UiState`, an `Action`, a `ViewModel`, a stateless `Screen` and a small `Route`. Preferences are in DataStore, history and per-app rules are in Room. Read-modify-write operations are atomic in the repositories.
 
 ## Permissions
 
-| Permission | Why | Required |
+| Permission | Purpose | Required |
 |---|---|---|
-| Notification access (user-granted in system settings) | Lets the listener see notifications | Yes |
-| `POST_NOTIFICATIONS` (Android 13+) | Show the "Stop" notification while ringing; alarms still play without it | No |
-| Do Not Disturb access | Lets you allow App Alert in DND settings; never changed silently | No |
-| Battery: unrestricted | More reliable monitoring with the screen off on aggressive OEMs | No |
-| `VIBRATE` | Vibration with the alarm | No |
+| Notification access | See notifications from selected apps | Yes |
+| `POST_NOTIFICATIONS` (Android 13+) | Show the Stop notification while ringing | No |
+| Do Not Disturb access | Let you allow alarms in DND | No |
+| Unrestricted battery use | More reliable on aggressive OEMs | No |
+| `VIBRATE` | Vibration | No |
 
-The app uses a `<queries>` entry for launcher apps instead of `QUERY_ALL_PACKAGES`, and requests no storage permission (custom sounds use the document picker with a persistable grant).
-
-## Testing
-
-* **Unit (`src/test`)**: matcher, quiet hours (incl. overnight and week wrap), throttle (duplicates, cooldown, bounded memory), trigger decisions, the full notification workflow with fakes, monitoring status, settings clamping, selection/rule use cases.
-* **Instrumented (`src/androidTest`)**: Room retention and rules, DataStore persistence across process restart, dashboard and application-list UI behaviour.
-* **Manual (required before trusting it)**: test on Android 13–16 and a real device with the screen off, locked, app swiped from recents, after reboot, with Battery Saver and with Do Not Disturb. Emulator results alone do not prove background reliability.
+No `QUERY_ALL_PACKAGES` and no storage permission (custom sounds use the document picker).
 
 ## Releasing
 
-Pushing a version tag builds, signs and publishes a GitHub Release (APK, AAB, checksums and the R8 mapping file):
+CI runs unit tests, lint and a release build on every push and pull request. Pushing a version tag builds a signed APK and AAB and publishes a GitHub Release:
 
 ```bash
 git tag v1.0.0
 git push origin v1.0.0
 ```
 
-Tags with a suffix such as `v1.1.0-beta1` are marked as pre-releases. CI (`.github/workflows/ci.yml`) runs unit tests, lint and a debug build on every push and pull request.
+Tags with a suffix like `v1.1.0-beta1` become pre-releases. Without signing secrets the release is signed with a throwaway test key and marked as a pre-release.
 
-One-time setup. Create a keystore and **keep it safe, losing it means you can never update the app for existing users**:
+To sign with your own key, create a keystore and keep it safe (losing it means you can't update the app):
 
 ```bash
 keytool -genkeypair -v -keystore release.jks -alias appalert \
   -keyalg RSA -keysize 4096 -validity 10000
-base64 -w0 release.jks   # macOS: base64 -i release.jks
+base64 -w0 release.jks
 ```
 
-Add these in GitHub → Settings → Secrets and variables → Actions: `SIGNING_KEYSTORE_BASE64` (the base64 output), `SIGNING_STORE_PASSWORD`, `SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD`. Never commit the keystore. If the secrets are missing, the release workflow signs with a throwaway test key and marks the release as a pre-release, so you can try the pipeline first. Test-key builds can't be installed over a build signed with a different key. Local release builds without secrets are simply unsigned.
-
-The debug APK is large (about 12 MB: no shrinking, plus Compose tooling); the release build is shrunk by R8 and is far smaller. Release builds use R8 shrinking (`app/proguard-rules.pro`). Keep each release's `mapping.txt` (attached to the release) to decode crash stack traces.
+Add these repository secrets: `SIGNING_KEYSTORE_BASE64`, `SIGNING_STORE_PASSWORD`, `SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD`. Never commit the keystore. Keep each release's `mapping.txt` to decode crash traces.
 
 ## Troubleshooting
 
-* **"Waiting for Android to connect"** – access is on but the service is not bound. Toggle App Alert's notification access off and on, or reopen the app (it asks Android to rebind).
-* **No sound** – raise the phone's *alarm* volume (App Alert's volume is relative to it) and check Do Not Disturb.
-* **Stops working after a while on Xiaomi/Huawei/OnePlus/Samsung** – set App Alert to unrestricted battery use and allow auto-start. See <https://dontkillmyapp.com>.
-* **Custom sound stopped playing** – the file was moved or deleted; App Alert falls back to the default alarm sound so you are never left without an alert.
+- **Waiting for Android to connect:** access is on but the service isn't bound. Toggle the notification access off and on, or reopen the app.
+- **No sound:** raise the alarm volume and check Do Not Disturb.
+- **Stops working after a while on Xiaomi, Huawei, OnePlus or Samsung:** set battery to unrestricted and allow auto-start. See https://dontkillmyapp.com.
+- **Custom sound stopped playing:** the file was moved or deleted. The app falls back to the default alarm sound.
 
 ## Known limitations
 
-* Playback runs in the app process (kept alive by the system's listener binding) instead of a foreground service. Verify on your target devices.
-* UI strings are English-only and not yet in `strings.xml`.
-* The onboarding step is not restored after process death.
-* Notifications that Android groups into a single summary may only alert for the individual messages the app posts.
+- Playback runs in the app process, not a foreground service.
+- UI strings are English only and not yet in `strings.xml`.
+- The onboarding step is not restored after process death.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the rules every change follows, and the [LICENSE](LICENSE) (MIT).
+See [CONTRIBUTING.md](CONTRIBUTING.md). Licensed under [MIT](LICENSE).

@@ -2,7 +2,6 @@ package com.kyawzinlinn.app.alert.feature.applications.domain
 
 enum class KeywordScope { TITLE, CONTENT, TITLE_OR_CONTENT }
 
-/** A user-selected application and how its notifications are matched. Package name is the identity. */
 data class AppRule(
     val packageName: String,
     val enabled: Boolean = true,

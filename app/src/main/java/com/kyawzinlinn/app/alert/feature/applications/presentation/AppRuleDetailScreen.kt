@@ -32,7 +32,6 @@ import com.kyawzinlinn.app.alert.core.ui.userMessage
 import com.kyawzinlinn.app.alert.feature.alarm.presentation.components.SoundSelectionCard
 import com.kyawzinlinn.app.alert.feature.applications.presentation.components.NotificationFiltersCard
 
-/** Per-app settings. [onBack] is null in the two-pane layout, where there is nothing to go back to. */
 @Composable
 fun AppRuleDetailScreen(
     state: AppRuleDetailUiState,

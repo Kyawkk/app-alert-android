@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 
-/** Soft surface card used by every feature. Content size changes animate subtly. */
 @Composable
 fun AppAlertCard(
     modifier: Modifier = Modifier,

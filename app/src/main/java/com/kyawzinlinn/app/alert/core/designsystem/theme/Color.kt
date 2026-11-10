@@ -4,7 +4,6 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
-/** Central semantic palette. Composables must read colors from MaterialTheme / AppAlertTheme only. */
 internal val LightColors = lightColorScheme(
     primary = Color(0xFF3558D6),
     onPrimary = Color(0xFFFFFFFF),
@@ -51,7 +50,6 @@ internal val DarkColors = darkColorScheme(
     onErrorContainer = Color(0xFFFFDAD6),
 )
 
-/** Colors that Material 3 does not define but the product needs (status semantics). */
 data class ExtendedColors(
     val success: Color,
     val onSuccess: Color,

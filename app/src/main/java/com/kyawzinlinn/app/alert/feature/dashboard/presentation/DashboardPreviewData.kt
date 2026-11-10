@@ -6,7 +6,6 @@ import com.kyawzinlinn.app.alert.core.ui.AppUiModel
 import com.kyawzinlinn.app.alert.feature.dashboard.domain.MonitoringStatus
 import com.kyawzinlinn.app.alert.feature.history.domain.AlertOutcome
 
-/** Sample data for previews and UI tests; never touches real notification access. */
 object DashboardPreviewData {
     val normal = DashboardUiState(
         isLoading = false,

@@ -6,10 +6,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-/**
- * Launches [block] and logs (instead of crashing the app) when storage or system calls fail, e.g. a
- * full disk during a DataStore write. Cancellation is always propagated. Never logs user content.
- */
 fun CoroutineScope.launchCatching(
     tag: String = "AppAlert",
     block: suspend CoroutineScope.() -> Unit,

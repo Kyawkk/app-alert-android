@@ -18,20 +18,15 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-/**
- * Rules live in Room (they are structured, per-app records). A hot in-memory snapshot, kept in
- * sync with the table, lets the notification listener decide in microseconds without a query.
- */
 class RoomAppRulesRepository(
     private val dao: AppRuleDao,
     scope: CoroutineScope,
 ) : AppRulesRepository {
 
-    /** null until the first database read completes. */
     private val snapshot: StateFlow<Map<String, AppRule>?> = dao.observeAll()
         .map { list -> list.map { it.toDomain() }.associateBy { it.packageName } }
+        // a broken database must not leave getRule() waiting forever
         .catch { e ->
-            // A broken database must not leave getRule() waiting forever: degrade to "nothing selected".
             Log.e("AppRules", "Cannot read rules: ${e.javaClass.simpleName}", e)
             emit(emptyMap())
         }

@@ -7,7 +7,6 @@ import com.kyawzinlinn.app.alert.feature.applications.domain.KeywordScope
 @Immutable
 data class AppRuleDetailUiState(
     val isLoading: Boolean = true,
-    /** False when the app is not (or no longer) selected. */
     val isSelected: Boolean = false,
     val packageName: String = "",
     val label: String = "",

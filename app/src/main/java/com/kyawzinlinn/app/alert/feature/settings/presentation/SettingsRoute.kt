@@ -25,7 +25,6 @@ fun SettingsRoute(
     val context = LocalContext.current
     val postNotificationsLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         viewModel.onAction(SettingsAction.RefreshPermissions)
-        // Denied (possibly permanently): the only remaining route is the system settings screen.
         if (!granted) context.startSettingsIntent(SystemSettingsIntents.appNotificationSettings(context))
     }
     SettingsScreen(

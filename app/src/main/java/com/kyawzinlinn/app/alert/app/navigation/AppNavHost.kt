@@ -19,6 +19,7 @@ import com.kyawzinlinn.app.alert.feature.onboarding.presentation.OnboardingRoute
 import com.kyawzinlinn.app.alert.feature.settings.presentation.SettingsRoute
 
 @Composable
+fun App// detail screens slide over their parent, so they need an opaque background
 fun AppNavHost(
     navController: NavHostController,
     startRoute: String,
@@ -26,7 +27,7 @@ fun AppNavHost(
     onNavigateTopLevel: (NavigationDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Detail screens slide over their parent, so they need an opaque background of their own.
+    // detail screens slide over their parent, so they need an opaque background
     val detailBackground = Modifier.background(MaterialTheme.colorScheme.background)
     NavHost(
         navController = navController,

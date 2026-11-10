@@ -12,7 +12,6 @@ data class AlertHistoryEntity(
     val outcome: String,
 )
 
-/** Keywords and categories are stored newline-separated; the UI never lets users enter newlines inside one. */
 @Entity(tableName = "app_rules")
 data class AppRuleEntity(
     @PrimaryKey val packageName: String,

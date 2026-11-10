@@ -40,10 +40,6 @@ import com.kyawzinlinn.app.alert.feature.onboarding.presentation.components.Onbo
 import com.kyawzinlinn.app.alert.feature.onboarding.presentation.components.OnboardingIntroStep
 import com.kyawzinlinn.app.alert.feature.onboarding.presentation.components.OnboardingSectionTitle
 
-/**
- * Setup wizard. Steps that reuse other features (app list, sound, test) are supplied as slots so
- * this screen stays stateless and previewable.
- */
 @Composable
 fun OnboardingScreen(
     state: OnboardingUiState,

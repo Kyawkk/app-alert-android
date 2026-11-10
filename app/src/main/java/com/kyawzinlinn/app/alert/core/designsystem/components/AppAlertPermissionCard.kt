@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 
-/** Shows one permission: state is conveyed by icon + text, never by color alone. */
 @Composable
 fun AppAlertPermissionCard(
     title: String,

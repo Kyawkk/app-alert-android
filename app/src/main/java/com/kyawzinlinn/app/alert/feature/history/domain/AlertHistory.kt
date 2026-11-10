@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.Flow
 
 enum class AlertOutcome { TRIGGERED, PLAYBACK_FAILED, SUPPRESSED_COOLDOWN, SUPPRESSED_QUIET_HOURS }
 
-/** History deliberately stores no notification text, only who, when and what happened. */
 data class AlertRecord(
     val id: Long,
     val packageName: String,
@@ -15,7 +14,6 @@ data class AlertRecord(
 interface AlertHistoryRepository {
     fun observeRecent(limit: Int): Flow<List<AlertRecord>>
 
-    /** Stores a record and enforces the retention policy ([RETENTION_DAYS] days, [MAX_ENTRIES] entries). */
     suspend fun record(packageName: String, outcome: AlertOutcome, timestampMillis: Long)
 
     suspend fun clear()

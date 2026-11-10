@@ -10,7 +10,6 @@ class AppAlertApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         container = AppContainer(this)
-        // Warm the in-memory rule snapshot so the listener can decide immediately after process start.
         container.appRulesRepository
     }
 }

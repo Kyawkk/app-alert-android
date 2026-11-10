@@ -10,7 +10,6 @@ import androidx.core.graphics.drawable.toBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/** Loads launcher icons one at a time on demand (never all installed apps at once) with a small LRU cache. */
 class AppIconLoader(context: Context) {
     private val packageManager: PackageManager = context.applicationContext.packageManager
     private val cache = LruCache<String, ImageBitmap>(MAX_CACHED_ICONS)
@@ -33,5 +32,4 @@ class AppIconLoader(context: Context) {
     }
 }
 
-/** Null in previews and tests: icons then fall back to a placeholder. */
 val LocalAppIconLoader = compositionLocalOf<AppIconLoader?> { null }

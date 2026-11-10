@@ -4,7 +4,6 @@ import android.text.format.DateUtils
 import com.kyawzinlinn.app.alert.feature.alarm.domain.AlarmFailure
 import com.kyawzinlinn.app.alert.feature.history.domain.AlertOutcome
 
-/** User-facing wording for domain values. Raw exception text is never shown. */
 fun AlarmFailure.userMessage(): String = when (this) {
     AlarmFailure.NO_SOUND_AVAILABLE -> "No alarm sound is available on this device. Choose a sound in alarm settings."
     AlarmFailure.SOUND_UNREADABLE -> "The selected sound could not be played. Choose another sound."

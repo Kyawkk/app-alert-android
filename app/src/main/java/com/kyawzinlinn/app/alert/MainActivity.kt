@@ -32,7 +32,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Permissions can change in system settings while the app is in the background.
         container.permissionStatusSource.refresh()
         val access = container.permissionStatusSource.state.value.notificationAccessGranted
         if (access && !container.listenerConnection.isConnected.value) {

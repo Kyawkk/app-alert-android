@@ -9,7 +9,6 @@ data class PermissionState(
     val ignoringBatteryOptimizations: Boolean = false,
 )
 
-/** Observable view of system permissions. Must be refreshed whenever the app returns to foreground. */
 interface PermissionStatusSource {
     val state: StateFlow<PermissionState>
 

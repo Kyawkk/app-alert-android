@@ -108,7 +108,6 @@ fun MonitoringStatusCard(
     val container by animateColorAsState(palette.container, tween(250), label = "statusContainer")
 
     AppAlertCard(modifier = modifier, containerColor = container) {
-        // Text and icon cross-fade between states; the card colour animates separately above.
         AnimatedContent(
             targetState = status,
             transitionSpec = { fadeIn(tween(220)) togetherWith fadeOut(tween(120)) },
@@ -119,7 +118,6 @@ fun MonitoringStatusCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    // Screen readers announce status changes (e.g. access revoked) without focus moving.
                     .semantics(mergeDescendants = true) {
                         liveRegion = LiveRegionMode.Polite
                         contentDescription = "${content.title}. ${content.description}"

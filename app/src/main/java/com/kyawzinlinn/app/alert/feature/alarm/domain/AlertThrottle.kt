@@ -2,14 +2,7 @@ package com.kyawzinlinn.app.alert.feature.alarm.domain
 
 enum class ThrottleResult { ALLOWED, DUPLICATE, COOLDOWN }
 
-/**
- * In-memory duplicate and cooldown tracking. State is intentionally not persisted:
- * after a process restart the worst case is one extra alarm, never a missed one.
- *
- * Android re-posts the same notification key for updates (progress, ranking, group changes),
- * so a callback does not always mean "new message". Same key + same content fingerprint within
- * [duplicateWindowMillis] is a duplicate.
- */
+// in memory on purpose: after a restart the worst case is one extra alarm, never a missed one
 class AlertThrottle(
     private val maxTracked: Int = 256,
     private val duplicateWindowMillis: Long = 10 * 60_000L,
@@ -22,7 +15,6 @@ class AlertThrottle(
     }
     private val lastAlarmByPackage = HashMap<String, Long>()
 
-    /** Records the event and, when [ThrottleResult.ALLOWED], also records that an alarm is about to start. */
     @Synchronized
     fun registerAndCheck(event: NotificationEvent, cooldownSeconds: Int, nowMillis: Long): ThrottleResult {
         val fingerprint = event.fingerprint()

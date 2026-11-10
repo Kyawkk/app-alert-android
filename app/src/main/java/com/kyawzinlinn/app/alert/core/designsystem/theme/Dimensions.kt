@@ -3,7 +3,6 @@ package com.kyawzinlinn.app.alert.core.designsystem.theme
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-/** The only spacing scale used by the app. */
 object Spacing {
     val xxs: Dp = 4.dp
     val xs: Dp = 8.dp
@@ -17,9 +16,7 @@ object Spacing {
 }
 
 object Dimens {
-    /** Minimum interactive size required for accessibility. */
     val minTouchTarget: Dp = 48.dp
-    /** Readable maximum content width on tablets / large screens. */
     val contentMaxWidth: Dp = 840.dp
     val appIconSize: Dp = 44.dp
     val smallAppIconSize: Dp = 36.dp

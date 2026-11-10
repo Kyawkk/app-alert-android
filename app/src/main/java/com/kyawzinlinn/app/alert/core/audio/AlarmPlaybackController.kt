@@ -27,14 +27,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-/**
- * Plays exactly one alarm at a time with USAGE_ALARM attributes. A new [start] replaces the current
- * alarm (no overlapping playback). The system volume is never touched: [AlarmRequest.volumePercent]
- * scales the player output relative to the device's alarm volume.
- *
- * Playback runs while the process is alive; the notification listener keeps it alive through the
- * system binding, and every alarm is bounded by its configured duration/repeat count.
- */
 class AlarmPlaybackController(
     context: Context,
     private val scope: CoroutineScope,
@@ -61,7 +53,7 @@ class AlarmPlaybackController(
     private var focusRequest: AudioFocusRequest? = null
     private var generation = 0
 
-    // An alarm must not be silenced because another app took audio focus, so changes are only logged.
+    // losing audio focus must not silence an alarm, so changes are only logged
     private val focusListener = AudioManager.OnAudioFocusChangeListener { change ->
         Log.d(TAG, "Audio focus changed ($change); alarm keeps playing")
     }
@@ -156,7 +148,6 @@ class AlarmPlaybackController(
             ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
 
-    /** Must be called while holding [lock]. */
     private fun stopLocked() {
         currentJob?.cancel()
         currentJob = null

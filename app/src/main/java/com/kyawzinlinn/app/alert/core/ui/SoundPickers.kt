@@ -19,7 +19,6 @@ class SoundPickerActions(
     val openFilePicker: () -> Unit,
 )
 
-/** Wires the Android ringtone picker and the document picker; both report the chosen URI string. */
 @Composable
 fun rememberSoundPickerActions(onSoundPicked: (String?) -> Unit): SoundPickerActions {
     val currentOnPicked by rememberUpdatedState(onSoundPicked)
@@ -53,7 +52,6 @@ fun rememberSoundPickerActions(onSoundPicked: (String?) -> Unit): SoundPickerAct
     }
 }
 
-/** Some OEM builds lack a picker; failing to open one must not crash the app. */
 private inline fun launchSafely(launch: () -> Unit) {
     try {
         launch()

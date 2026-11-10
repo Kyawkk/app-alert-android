@@ -21,7 +21,6 @@ internal val AppAlertTypography = Typography(
         lineHeight = 24.sp,
     ),
     bodyMedium = Default.bodyMedium.copy(fontSize = 15.sp, lineHeight = 22.sp),
-    // Secondary text stays readable: never below 13sp.
     bodySmall = Default.bodySmall.copy(fontSize = 13.sp, lineHeight = 18.sp),
     labelMedium = Default.labelMedium.copy(fontSize = 13.sp),
 )

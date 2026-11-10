@@ -55,7 +55,6 @@ class AlertThrottleTest {
         throttle.registerAndCheck(event(key = "a"), 0, 0)
         throttle.registerAndCheck(event(key = "b"), 0, 1)
         throttle.registerAndCheck(event(key = "c"), 0, 2) // evicts "a"
-        // "a" was forgotten, so the same content is treated as new again (never a missed alarm).
         assertEquals(ThrottleResult.ALLOWED, throttle.registerAndCheck(event(key = "a"), 0, 3))
     }
 }

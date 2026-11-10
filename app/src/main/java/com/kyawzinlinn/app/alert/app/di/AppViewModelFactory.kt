@@ -12,13 +12,11 @@ import com.kyawzinlinn.app.alert.feature.history.presentation.HistoryViewModel
 import com.kyawzinlinn.app.alert.feature.onboarding.presentation.OnboardingViewModel
 import com.kyawzinlinn.app.alert.feature.settings.presentation.SettingsViewModel
 
-/** Creates every ViewModel from the [AppContainer] (constructor injection without a DI framework). */
 class AppViewModelFactory(
     private val container: AppContainer,
     private val packageName: String? = null,
 ) : ViewModelProvider.Factory {
 
-    /** Factory for [AppRuleDetailViewModel], which needs the package it configures. */
     fun forPackage(packageName: String) = AppViewModelFactory(container, packageName)
 
     @Suppress("UNCHECKED_CAST")

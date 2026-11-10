@@ -10,7 +10,6 @@ data class AlarmUiState(
     val settings: AlarmSettings = AlarmSettings(),
     val soundTitle: String = "",
     val isPlaying: Boolean = false,
-    /** The last picked sound could not be played and was not saved. */
     val soundRejected: Boolean = false,
     val playbackFailure: AlarmFailure? = null,
 )

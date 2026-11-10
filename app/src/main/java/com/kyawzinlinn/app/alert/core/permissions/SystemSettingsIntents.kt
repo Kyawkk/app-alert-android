@@ -7,7 +7,6 @@ import android.net.Uri
 import android.provider.Settings
 import android.util.Log
 
-/** Intents that open the Android settings screens where the user grants each permission. */
 object SystemSettingsIntents {
     fun notificationListenerSettings() = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
 
@@ -22,7 +21,6 @@ object SystemSettingsIntents {
         .setData(Uri.fromParts("package", context.packageName, null))
 }
 
-/** Starts a settings intent; some OEM builds lack individual screens, so failures are handled. */
 fun Context.startSettingsIntent(intent: Intent, fallback: Intent? = null) {
     try {
         startActivity(intent)

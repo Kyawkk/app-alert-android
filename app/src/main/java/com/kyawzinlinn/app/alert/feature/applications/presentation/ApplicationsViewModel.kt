@@ -44,7 +44,6 @@ class ApplicationsViewModel(
                 val visible = installedState.apps
                     .filter { trimmed.isEmpty() || it.label.contains(trimmed, ignoreCase = true) }
                     .map { ApplicationItemUiModel(it.packageName, it.label, it.packageName in selected) }
-                    // Selected apps first, then alphabetical (the list is already sorted by label).
                     .sortedByDescending { it.isSelected }
                 ApplicationsUiState(
                     isLoading = false,
@@ -76,7 +75,6 @@ class ApplicationsViewModel(
         viewModelScope.launchCatching {
             val fresh = getInstalledApplications(forceRefresh = true)
             val current = installed.value
-            // Only publish real changes so the list never flickers on every resume.
             if (current !is Installed.Loaded || current.apps != fresh) installed.value = Installed.Loaded(fresh)
         }
     }

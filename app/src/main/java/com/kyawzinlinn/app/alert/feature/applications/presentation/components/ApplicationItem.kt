@@ -30,7 +30,6 @@ import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 import com.kyawzinlinn.app.alert.core.ui.AppIcon
 import com.kyawzinlinn.app.alert.feature.applications.presentation.ApplicationItemUiModel
 
-/** Row that toggles monitoring for one app; tapping the label area opens its settings. */
 @Composable
 fun ApplicationItem(
     app: ApplicationItemUiModel,

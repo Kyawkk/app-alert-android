@@ -15,10 +15,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-/**
- * Entry point of notification monitoring. It only converts callbacks into [NotificationEvent]s
- * and delegates every decision to the domain layer. No notification content is logged.
- */
 class AppAlertNotificationListenerService : NotificationListenerService() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -30,13 +26,11 @@ class AppAlertNotificationListenerService : NotificationListenerService() {
 
     override fun onListenerDisconnected() {
         container.listenerConnection.setConnected(false)
-        // Ask the system to bind us again (e.g. after the process was killed or the listener dropped).
         requestSystemRebind(this)
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         if (sbn.packageName == packageName) return // never react to our own "active alarm" notification
-        // Cheap pre-filter without allocations: ignore apps the user did not select.
         if (container.appRulesRepository.isSelectedOrNull(sbn.packageName) == false) return
 
         val event = sbn.toEvent()
@@ -76,7 +70,6 @@ class AppAlertNotificationListenerService : NotificationListenerService() {
     companion object {
         private const val TAG = "AppAlertListener"
 
-        /** Asks Android to bind the listener again; harmless when access is missing or already bound. */
         fun requestSystemRebind(context: Context) {
             try {
                 NotificationListenerService.requestRebind(

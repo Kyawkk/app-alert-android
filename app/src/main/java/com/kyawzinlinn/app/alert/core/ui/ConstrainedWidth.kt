@@ -8,7 +8,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Dimens
 
-/** Centers content and caps its width so it stays readable on tablets and landscape. */
 @Composable
 fun ConstrainedWidth(
     modifier: Modifier = Modifier,

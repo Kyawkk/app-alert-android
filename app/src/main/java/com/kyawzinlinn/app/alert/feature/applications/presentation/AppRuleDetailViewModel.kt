@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-/** Configuration of one monitored app. Filter edits are drafts that are saved explicitly. */
 class AppRuleDetailViewModel(
     private val packageName: String,
     observeSelectedApplications: ObserveSelectedApplicationsUseCase,

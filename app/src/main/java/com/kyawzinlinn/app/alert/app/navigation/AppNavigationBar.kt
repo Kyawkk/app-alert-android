@@ -28,7 +28,6 @@ val TopLevelDestinations = listOf(
     TopLevelDestination(NavigationDestination.Settings, "Settings", Icons.Default.Settings),
 )
 
-/** Bottom navigation for compact widths. */
 @Composable
 fun AppAlertBottomBar(
     currentRoute: String?,
@@ -47,7 +46,6 @@ fun AppAlertBottomBar(
     }
 }
 
-/** Navigation rail for medium and expanded widths. */
 @Composable
 fun AppAlertNavigationRail(
     currentRoute: String?,

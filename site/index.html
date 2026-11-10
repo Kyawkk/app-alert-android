@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>App Alert: an alarm for the notifications you can't miss</title>
   <meta name="description" content="App Alert plays a loud alarm when a notification arrives from the apps you choose. Open source, private, and entirely on your device.">
-  <meta name="theme-color" content="#101218">
+  <meta name="theme-color" content="#0b0d12">
   <meta property="og:title" content="App Alert">
   <meta property="og:description" content="An alarm for the notifications you can't miss. Open source and private.">
   <meta property="og:image" content="screenshots/phone-home.png">
@@ -20,100 +20,135 @@
   </script>
 </head>
 <body>
-  <header class="nav">
-    <a class="brand" href="#top" aria-label="App Alert home">
-      <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6V11a7 7 0 0 0-5.5-6.84V3.5a1.5 1.5 0 0 0-3 0v.66A7 7 0 0 0 5 11v5l-2 2v1h18v-1l-2-2Z"/></svg>
-      App Alert
-    </a>
-    <nav class="links" aria-label="Primary">
-      <a href="#features">Features</a>
-      <a href="#screens">Screens</a>
-      <a href="#privacy">Privacy</a>
-      <a href="https://github.com/Kyawkk/app-alert-android" rel="noopener">GitHub</a>
-    </nav>
-    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light and dark theme">
-      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0-5h0v3m0 14v3m10-10h-3M5 12H2m16.95-6.95-2.12 2.12M7.17 16.83l-2.12 2.12m0-13.9 2.12 2.12m9.66 9.66 2.12 2.12"/></svg>
-      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
-    </button>
+  <div class="backdrop" aria-hidden="true"></div>
+
+  <header class="nav-wrap">
+    <div class="nav">
+      <a class="brand" href="#top" aria-label="App Alert home">
+        <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6V11a7 7 0 0 0-5.5-6.84V3.5a1.5 1.5 0 0 0-3 0v.66A7 7 0 0 0 5 11v5l-2 2v1h18v-1l-2-2Z"/></svg>
+        <span>App Alert</span>
+      </a>
+      <nav class="links" aria-label="Primary">
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#screens">Screens</a>
+        <a href="#privacy">Privacy</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light and dark theme">
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0-5h0v3m0 14v3m10-10h-3M5 12H2m16.95-6.95-2.12 2.12M7.17 16.83l-2.12 2.12m0-13.9 2.12 2.12m9.66 9.66 2.12 2.12"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        </button>
+        <a class="btn small primary" href="https://github.com/Kyawkk/app-alert-android/releases/latest" rel="noopener">Download</a>
+      </div>
+    </div>
   </header>
 
   <main id="top">
     <section class="hero">
       <div class="hero-copy">
-        <p class="eyebrow">Open source &middot; Android</p>
-        <h1>An alarm for the notifications you <em>can't miss.</em></h1>
-        <p class="lead">Pick the apps that matter. When one of them notifies you, App Alert rings, even when your phone is on silent or you're away from the screen.</p>
+        <a class="badge" href="https://github.com/Kyawkk/app-alert-android" rel="noopener">
+          <span class="pulse"></span> Open source on GitHub
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+        </a>
+        <h1>An alarm for the notifications you <span class="grad">can't miss.</span></h1>
+        <p class="lead">Pick the apps that matter. When one of them notifies you, App Alert rings, even when your phone is on silent or you're across the room.</p>
         <div class="cta">
           <a class="btn primary" href="https://github.com/Kyawkk/app-alert-android/releases/latest" rel="noopener">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14v-2H5v2Zm7-4 6-6h-4V4h-4v6H6l6 6Z"/></svg>
             Download APK
           </a>
-          <a class="btn tonal" href="https://github.com/Kyawkk/app-alert-android" rel="noopener">View on GitHub</a>
+          <a class="btn ghost" href="https://github.com/Kyawkk/app-alert-android" rel="noopener">View source</a>
         </div>
-        <ul class="facts">
-          <li>Android 7.0+</li>
-          <li>No account</li>
-          <li>No ads or tracking</li>
-        </ul>
+        <dl class="stats">
+          <div><dt>100%</dt><dd>on-device</dd></div>
+          <div><dt>0</dt><dd>trackers or ads</dd></div>
+          <div><dt>7.0+</dt><dd>Android</dd></div>
+        </dl>
       </div>
+
       <div class="hero-art" aria-hidden="true">
-        <div class="glow"></div>
-        <figure class="phone back"><img src="screenshots/phone-apps.png" alt="" width="1080" height="2400" loading="eager"></figure>
-        <figure class="phone front"><img src="screenshots/phone-home.png" alt="" width="1080" height="2400" fetchpriority="high"></figure>
+        <div class="orb"></div>
+        <div class="device back"><img src="screenshots/phone-apps.png" alt="" width="1080" height="2400"></div>
+        <div class="device front"><img src="screenshots/phone-home.png" alt="" width="1080" height="2400" fetchpriority="high"></div>
+        <div class="toast t1">
+          <span class="ring"><svg viewBox="0 0 24 24"><path d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6V11a7 7 0 0 0-5.5-6.84V3.5a1.5 1.5 0 0 0-3 0v.66A7 7 0 0 0 5 11v5l-2 2v1h18v-1l-2-2Z"/></svg></span>
+          <div><strong>Alarm ringing</strong><small>New email in Gmail</small></div>
+        </div>
+        <div class="toast t2">
+          <span class="ok"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+          <div><strong>Monitoring is on</strong><small>Watching 1 app</small></div>
+        </div>
       </div>
     </section>
 
     <section class="section" id="features">
       <div class="section-head reveal">
         <p class="eyebrow">Features</p>
-        <h2>Loud when it matters, quiet when it doesn't.</h2>
+        <h2>Loud when it matters,<br>quiet when it doesn't.</h2>
       </div>
-      <div class="grid">
-        <article class="card reveal">
-          <span class="chip-icon"><svg viewBox="0 0 24 24"><path d="M4 8h16v2H4V8Zm0 6h10v2H4v-2Zm0-12h16v2H4V2Z"/></svg></span>
+
+      <div class="bento">
+        <article class="card c3 reveal">
+          <div class="viz apps-viz" aria-hidden="true">
+            <span class="av a1">G</span><span class="av a2">C</span><span class="av a3">M</span><span class="av a4">S</span><span class="av a5">+</span>
+          </div>
           <h3>Choose your apps</h3>
           <p>Monitor only the apps you pick, each with its own on and off switch.</p>
         </article>
-        <article class="card reveal">
-          <span class="chip-icon"><svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6Z"/></svg></span>
+        <article class="card c3 reveal">
+          <div class="viz eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
           <h3>Per-app sounds</h3>
-          <p>Use a system ringtone or your own audio file, with volume, duration, repeat and vibration.</p>
+          <p>A system ringtone or your own audio file, with volume, duration, repeat and vibration.</p>
         </article>
-        <article class="card reveal">
-          <span class="chip-icon"><svg viewBox="0 0 24 24"><path d="M3 4h18l-7 8.5V20l-4-2v-5.5L3 4Z"/></svg></span>
+        <article class="card c2 reveal">
+          <div class="viz chips" aria-hidden="true"><b>Messages</b><b class="on">Calls</b><b>Email</b><b class="on">Urgent</b></div>
           <h3>Smart filters</h3>
-          <p>Alarm only for keywords or notification types such as messages, calls or email.</p>
+          <p>Alarm only for keywords or notification types.</p>
         </article>
-        <article class="card reveal">
-          <span class="chip-icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 5v5l4 2-1 1.7-5-2.7V7h2Z"/></svg></span>
+        <article class="card c2 reveal">
+          <div class="viz night" aria-hidden="true"><span>22:00</span><div class="bar"><i></i></div><span>07:00</span></div>
           <h3>Quiet hours</h3>
-          <p>Stay silent during a daily window, even across midnight. Skipped alerts still show in history.</p>
+          <p>A daily silent window, even across midnight.</p>
         </article>
-        <article class="card reveal">
-          <span class="chip-icon"><svg viewBox="0 0 24 24"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm0 6v10h14V9H5Z"/></svg></span>
+        <article class="card c2 reveal">
+          <div class="viz rows" aria-hidden="true"><i></i><i></i><i></i></div>
           <h3>Alert history</h3>
-          <p>See what rang and what was skipped. Only the outcome is kept, for 30 days.</p>
+          <p>Outcomes only, kept for 30 days. Never message text.</p>
         </article>
-        <article class="card reveal">
-          <span class="chip-icon"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.4A4.6 4.6 0 0 0 22 7.8C22 5 17.5 3 12 3Z"/></svg></span>
-          <h3>Light, dark, adaptive</h3>
-          <p>Follows your system theme or stays fixed, with layouts for phones and tablets.</p>
+        <article class="card c6 wide reveal">
+          <div>
+            <h3>Light, dark, and everything in between</h3>
+            <p>Follows your system theme or stays fixed, with layouts that adapt to phones, tablets and landscape.</p>
+          </div>
+          <div class="viz seg" aria-hidden="true"><b>System</b><b>Light</b><b class="on">Dark</b></div>
         </article>
       </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="section-head reveal">
+        <p class="eyebrow">How it works</p>
+        <h2>Set up in under a minute.</h2>
+      </div>
+      <ol class="steps">
+        <li class="reveal"><span class="num">1</span><h3>Allow notification access</h3><p>Android asks you to turn it on once. The onboarding opens the right screen for you.</p></li>
+        <li class="reveal"><span class="num">2</span><h3>Pick your apps</h3><p>Choose which apps can ring, then add a sound or filters if you want them.</p></li>
+        <li class="reveal"><span class="num">3</span><h3>Carry on with your day</h3><p>When a chosen app notifies you, the alarm plays until you stop it.</p></li>
+      </ol>
     </section>
 
     <section class="section" id="screens">
       <div class="section-head reveal">
         <p class="eyebrow">Screens</p>
-        <h2>Designed with Material 3.</h2>
-        <p class="sub">Calm, readable and quick to set up.</p>
+        <h2>Calm, readable, Material 3.</h2>
       </div>
       <div class="strip reveal" tabindex="0" role="group" aria-label="Phone screenshots, scroll sideways">
-        <figure class="phone"><img src="screenshots/phone-home.png" alt="Home screen showing monitoring status and monitored apps" width="1080" height="2400" loading="lazy"><figcaption>Home</figcaption></figure>
-        <figure class="phone"><img src="screenshots/phone-apps.png" alt="Applications list with search and per-app switches" width="1080" height="2400" loading="lazy"><figcaption>Apps</figcaption></figure>
-        <figure class="phone"><img src="screenshots/phone-app-rules.png" alt="Per-app sound and notification filters" width="1080" height="2400" loading="lazy"><figcaption>App rules</figcaption></figure>
-        <figure class="phone"><img src="screenshots/phone-history.png" alt="Alert history" width="1080" height="2400" loading="lazy"><figcaption>History</figcaption></figure>
-        <figure class="phone"><img src="screenshots/phone-settings.png" alt="Settings with theme, alarm and quiet hours" width="1080" height="2400" loading="lazy"><figcaption>Settings</figcaption></figure>
+        <figure><div class="device"><img src="screenshots/phone-home.png" alt="Home screen showing monitoring status and monitored apps" width="1080" height="2400" loading="lazy"></div><figcaption>Home</figcaption></figure>
+        <figure><div class="device"><img src="screenshots/phone-apps.png" alt="Applications list with search and per-app switches" width="1080" height="2400" loading="lazy"></div><figcaption>Apps</figcaption></figure>
+        <figure><div class="device"><img src="screenshots/phone-app-rules.png" alt="Per-app sound and notification filters" width="1080" height="2400" loading="lazy"></div><figcaption>App rules</figcaption></figure>
+        <figure><div class="device"><img src="screenshots/phone-history.png" alt="Alert history" width="1080" height="2400" loading="lazy"></div><figcaption>History</figcaption></figure>
+        <figure><div class="device"><img src="screenshots/phone-settings.png" alt="Settings with theme, alarm and quiet hours" width="1080" height="2400" loading="lazy"></div><figcaption>Settings</figcaption></figure>
       </div>
       <div class="tablets reveal">
         <figure class="tablet"><img src="screenshots/tablet-apps.png" alt="Applications list and app detail side by side on a tablet" width="1920" height="1200" loading="lazy"></figure>
@@ -123,22 +158,26 @@
 
     <section class="section" id="privacy">
       <div class="panel reveal">
-        <div>
-          <p class="eyebrow">Privacy</p>
+        <div class="panel-copy">
+          <p class="eyebrow">Private by design</p>
           <h2>Your notifications never leave your phone.</h2>
-          <p>App Alert has no server, no account and no analytics. Message text is read only to apply your filters and is never stored or logged. The whole project is open source under the MIT license, so you can check every line.</p>
+          <p>No server, no account, no analytics. Message text is read only to apply your filters and is never stored or logged. It's open source under the MIT license, so you can check every line.</p>
+          <div class="cta">
+            <a class="btn primary light" href="https://github.com/Kyawkk/app-alert-android/releases/latest" rel="noopener">Get the latest release</a>
+            <a class="btn ghost light" href="https://github.com/Kyawkk/app-alert-android" rel="noopener">Read the source</a>
+          </div>
         </div>
-        <div class="cta">
-          <a class="btn primary" href="https://github.com/Kyawkk/app-alert-android/releases/latest" rel="noopener">Get the latest release</a>
-          <a class="btn tonal" href="https://github.com/Kyawkk/app-alert-android" rel="noopener">Read the source</a>
+        <div class="shield" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Zm-1.2 14.2-3.5-3.5 1.4-1.4 2.1 2.1 4.6-4.6 1.4 1.4-6 6Z"/></svg>
         </div>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <p>App Alert &middot; MIT licensed &middot; Font: Figtree (OFL)</p>
-    <p><a href="https://github.com/Kyawkk/app-alert-android/issues" rel="noopener">Report an issue</a></p>
+    <div class="brand"><svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6V11a7 7 0 0 0-5.5-6.84V3.5a1.5 1.5 0 0 0-3 0v.66A7 7 0 0 0 5 11v5l-2 2v1h18v-1l-2-2Z"/></svg><span>App Alert</span></div>
+    <p>MIT licensed &middot; Font: Figtree (OFL)</p>
+    <p><a href="https://github.com/Kyawkk/app-alert-android/issues" rel="noopener">Report an issue</a> &middot; <a href="https://github.com/Kyawkk/app-alert-android" rel="noopener">GitHub</a></p>
   </footer>
 
   <script src="script.js" defer></script>

@@ -19,7 +19,6 @@ import com.kyawzinlinn.app.alert.feature.onboarding.presentation.OnboardingRoute
 import com.kyawzinlinn.app.alert.feature.settings.presentation.SettingsRoute
 
 @Composable
-fun App// detail screens slide over their parent, so they need an opaque background
 fun AppNavHost(
     navController: NavHostController,
     startRoute: String,

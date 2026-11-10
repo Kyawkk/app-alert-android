@@ -14,10 +14,25 @@ android {
         applicationId = "com.kyawzinlinn.app.alert"
         minSdk = 24
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
+        // CI passes these for tagged releases (see .github/workflows/release.yml).
+        versionCode = providers.gradleProperty("appVersionCode").map(String::toInt).getOrElse(1)
+        versionName = providers.gradleProperty("appVersionName").getOrElse("1.0")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // Release signing comes from environment variables so no secret is ever committed.
+    // Without them (local or contributor builds) the release APK is simply left unsigned.
+    val releaseKeystore = System.getenv("SIGNING_KEYSTORE_PATH")
+    signingConfigs {
+        if (releaseKeystore != null) {
+            create("release") {
+                storeFile = file(releaseKeystore)
+                storePassword = System.getenv("SIGNING_STORE_PASSWORD")
+                keyAlias = System.getenv("SIGNING_KEY_ALIAS")
+                keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
@@ -25,6 +40,13 @@ android {
             optimization {
                 enable = true
                 packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
+                keepRules {
+                    files.add(getDefaultProguardFile("proguard-android-optimize.txt"))
+                    files.add(file("proguard-rules.pro"))
+                }
+            }
+            if (releaseKeystore != null) {
+                signingConfig = signingConfigs.getByName("release")
             }
         }
     }

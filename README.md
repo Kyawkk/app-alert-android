@@ -120,6 +120,29 @@ The app uses a `<queries>` entry for launcher apps instead of `QUERY_ALL_PACKAGE
 * **Instrumented (`src/androidTest`)**: Room retention and rules, DataStore persistence across process restart, dashboard and application-list UI behaviour.
 * **Manual (required before trusting it)**: test on Android 13–16 and a real device with the screen off, locked, app swiped from recents, after reboot, with Battery Saver and with Do Not Disturb. Emulator results alone do not prove background reliability.
 
+## Releasing
+
+Pushing a version tag builds, signs and publishes a GitHub Release (APK, AAB, checksums and the R8 mapping file):
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+Tags with a suffix such as `v1.1.0-beta1` are marked as pre-releases. CI (`.github/workflows/ci.yml`) runs unit tests, lint and a debug build on every push and pull request.
+
+One-time setup. Create a keystore and **keep it safe, losing it means you can never update the app for existing users**:
+
+```bash
+keytool -genkeypair -v -keystore release.jks -alias appalert \
+  -keyalg RSA -keysize 4096 -validity 10000
+base64 -w0 release.jks   # macOS: base64 -i release.jks
+```
+
+Add these in GitHub → Settings → Secrets and variables → Actions: `SIGNING_KEYSTORE_BASE64` (the base64 output), `SIGNING_STORE_PASSWORD`, `SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD`. Never commit the keystore. Local release builds work without these and are simply unsigned.
+
+Release builds use R8 shrinking (`app/proguard-rules.pro`). Keep each release's `mapping.txt` (attached to the release) to decode crash stack traces.
+
 ## Troubleshooting
 
 * **"Waiting for Android to connect"** – access is on but the service is not bound. Toggle App Alert's notification access off and on, or reopen the app (it asks Android to rebind).

@@ -139,9 +139,9 @@ keytool -genkeypair -v -keystore release.jks -alias appalert \
 base64 -w0 release.jks   # macOS: base64 -i release.jks
 ```
 
-Add these in GitHub → Settings → Secrets and variables → Actions: `SIGNING_KEYSTORE_BASE64` (the base64 output), `SIGNING_STORE_PASSWORD`, `SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD`. Never commit the keystore. Local release builds work without these and are simply unsigned.
+Add these in GitHub → Settings → Secrets and variables → Actions: `SIGNING_KEYSTORE_BASE64` (the base64 output), `SIGNING_STORE_PASSWORD`, `SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD`. Never commit the keystore. If the secrets are missing, the release workflow signs with a throwaway test key and marks the release as a pre-release, so you can try the pipeline first. Test-key builds can't be installed over a build signed with a different key. Local release builds without secrets are simply unsigned.
 
-Release builds use R8 shrinking (`app/proguard-rules.pro`). Keep each release's `mapping.txt` (attached to the release) to decode crash stack traces.
+The debug APK is large (about 12 MB: no shrinking, plus Compose tooling); the release build is shrunk by R8 and is far smaller. Release builds use R8 shrinking (`app/proguard-rules.pro`). Keep each release's `mapping.txt` (attached to the release) to decode crash stack traces.
 
 ## Troubleshooting
 

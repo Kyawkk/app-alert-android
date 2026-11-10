@@ -50,6 +50,22 @@ android {
             }
         }
     }
+    // The UI is English-only, so drop the translations bundled with AndroidX/Material libraries.
+    androidResources {
+        localeFilters += listOf("en")
+    }
+    packaging {
+        resources {
+            excludes += setOf(
+                "/META-INF/{AL2.0,LGPL2.1}",
+                "/META-INF/*.version",
+                "/META-INF/com/android/build/gradle/app-metadata.properties",
+                "/kotlin/**",
+                "/DebugProbesKt.bin",
+                "/kotlin-tooling-metadata.json",
+            )
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11

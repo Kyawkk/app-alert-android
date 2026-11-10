@@ -26,30 +26,38 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Check signing secrets
+      - name: Prepare signing key
         env:
           KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
-          if [ -z "$KEYSTORE_BASE64" ]; then
-            echo "::error::Missing SIGNING_KEYSTORE_BASE64 secret. See README, section 'Releasing'."
-            exit 1
+          KEYSTORE="$RUNNER_TEMP/release.jks"
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "Using the real release key from repository secrets."
+            echo "$KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE"
+            echo "TEST_KEY=false" >> "$GITHUB_ENV"
+          else
+            echo "::warning::No signing secrets found. Using a throwaway TEST key; this build cannot update installs signed with a different key."
+            STORE_PASSWORD=$(openssl rand -hex 16)
+            KEY_PASSWORD="$STORE_PASSWORD"
+            KEY_ALIAS=test
+            keytool -genkeypair -keystore "$KEYSTORE" -alias "$KEY_ALIAS" \
+              -storepass "$STORE_PASSWORD" -keypass "$KEY_PASSWORD" \
+              -keyalg RSA -keysize 2048 -validity 3650 -dname "CN=App Alert Test"
+            echo "TEST_KEY=true" >> "$GITHUB_ENV"
           fi
-
-      - name: Decode keystore
-        env:
-          KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
-        run: |
-          echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.jks"
-          echo "SIGNING_KEYSTORE_PATH=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+          echo "::add-mask::$STORE_PASSWORD"
+          echo "SIGNING_KEYSTORE_PATH=$KEYSTORE" >> "$GITHUB_ENV"
+          echo "SIGNING_STORE_PASSWORD=$STORE_PASSWORD" >> "$GITHUB_ENV"
+          echo "SIGNING_KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_ENV"
+          echo "SIGNING_KEY_PASSWORD=$KEY_PASSWORD" >> "$GITHUB_ENV"
 
       - name: Unit tests
         run: ./gradlew testDebugUnitTest
 
       - name: Build signed release APK and AAB
-        env:
-          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
-          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
           NAME="${VERSION#v}"
           ./gradlew assembleRelease bundleRelease \
@@ -76,4 +84,5 @@ jobs:
         with:
           files: dist/*
           generate_release_notes: true
-          prerelease: ${{ contains(github.ref_name, '-') }}
+          prerelease: ${{ contains(github.ref_name, '-') || env.TEST_KEY == 'true' }}
+          body: ${{ env.TEST_KEY == 'true' && 'Signed with a throwaway test key (no release secrets configured). For testing only.' || '' }}

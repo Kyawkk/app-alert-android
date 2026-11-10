@@ -48,7 +48,7 @@ class AppViewModelFactory(
             modelClass.isAssignableFrom(HistoryViewModel::class.java) ->
                 HistoryViewModel(getNotificationHistory, getAppLabel, clearHistory)
             modelClass.isAssignableFrom(SettingsViewModel::class.java) ->
-                SettingsViewModel(observeAppSettings, permissionStatusSource, updateQuietHours)
+                SettingsViewModel(observeAppSettings, permissionStatusSource, updateQuietHours, setThemeMode)
             modelClass.isAssignableFrom(OnboardingViewModel::class.java) ->
                 OnboardingViewModel(permissionStatusSource, observeSelectedApplications, completeOnboarding)
             else -> throw IllegalArgumentException("Unknown ViewModel: ${modelClass.name}")

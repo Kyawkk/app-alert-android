@@ -19,6 +19,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButton
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertEmptyState
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertScreenHeader
 import com.kyawzinlinn.app.alert.core.designsystem.preview.AppAlertPreviews
 import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
@@ -41,11 +42,7 @@ fun ApplicationsScreen(
         verticalArrangement = Arrangement.spacedBy(Spacing.xs),
     ) {
         if (showTitle) {
-            Text(
-                "Applications",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(top = Spacing.sm).semantics { heading() },
-            )
+            AppAlertScreenHeader("Applications")
         }
         Text(
             text = if (state.isLoading || state.loadFailed) "Choose apps to monitor"

@@ -17,6 +17,7 @@ val Context.appAlertDataStore: DataStore<Preferences> by preferencesDataStore(na
 
 object PreferenceKeys {
     val MONITORING_ENABLED = booleanPreferencesKey("monitoring_enabled")
+    val THEME_MODE = stringPreferencesKey("theme_mode")
     val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
     val QUIET_ENABLED = booleanPreferencesKey("quiet_enabled")
     val QUIET_START = intPreferencesKey("quiet_start_minute")

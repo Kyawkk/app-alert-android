@@ -19,13 +19,16 @@ import androidx.compose.ui.semantics.semantics
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButton
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButtonStyle
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertCard
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertScreenHeader
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertSectionHeader
+import com.kyawzinlinn.app.alert.core.designsystem.motion.entrance
 import com.kyawzinlinn.app.alert.core.designsystem.preview.AppAlertPreviews
 import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 import com.kyawzinlinn.app.alert.core.permissions.PermissionState
 import com.kyawzinlinn.app.alert.core.ui.ConstrainedWidth
 import com.kyawzinlinn.app.alert.feature.settings.domain.QuietHours
+import com.kyawzinlinn.app.alert.feature.settings.presentation.components.AppearanceCard
 import com.kyawzinlinn.app.alert.feature.settings.presentation.components.PermissionsSection
 import com.kyawzinlinn.app.alert.feature.settings.presentation.components.QuietHoursCard
 
@@ -52,12 +55,15 @@ fun SettingsScreen(
                 .padding(horizontal = Spacing.md),
             verticalArrangement = Arrangement.spacedBy(Spacing.md),
         ) {
-            Text(
-                "Settings",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(top = Spacing.sm).semantics { heading() },
-            )
-            AppAlertCard {
+            AppAlertScreenHeader("Settings")
+            Column(Modifier.entrance(0), verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                AppAlertSectionHeader("Appearance")
+                AppearanceCard(
+                    themeMode = state.themeMode,
+                    onThemeModeChange = { onAction(SettingsAction.ThemeModeChanged(it)) },
+                )
+            }
+            AppAlertCard(Modifier.entrance(1)) {
                 Text("Alarm", style = MaterialTheme.typography.titleMedium)
                 Text(
                     "Sound, volume, duration, repeat and cooldown.",
@@ -69,11 +75,12 @@ fun SettingsScreen(
                     Modifier.fillMaxWidth().padding(top = Spacing.sm), AppAlertButtonStyle.Tonal,
                 )
             }
-            Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+            Column(Modifier.entrance(2), verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
                 AppAlertSectionHeader("Schedule")
                 QuietHoursCard(state.quietHours, onAction)
             }
             PermissionsSection(
+                modifier = Modifier.entrance(3),
                 permissions = state.permissions,
                 onOpenNotificationAccess = onOpenNotificationAccess,
                 onRequestPostNotifications = onRequestPostNotifications,

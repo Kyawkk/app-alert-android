@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.kyawzinlinn.app.alert.core.designsystem.theme.Dimens
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 
 @Composable
@@ -34,7 +35,7 @@ fun AppAlertEmptyState(
         Icon(
             imageVector = icon,
             contentDescription = null, // decorative: the title carries the meaning
-            modifier = Modifier.size(48.dp),
+            modifier = Modifier.size(Dimens.iconSizeLarge),
             tint = MaterialTheme.colorScheme.outline,
         )
         Text(title, style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center)

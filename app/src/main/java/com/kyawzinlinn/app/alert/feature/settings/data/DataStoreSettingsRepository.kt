@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import com.kyawzinlinn.app.alert.core.common.ThemeMode
 import com.kyawzinlinn.app.alert.core.datastore.PreferenceKeys
 import com.kyawzinlinn.app.alert.core.datastore.safeData
 import com.kyawzinlinn.app.alert.feature.settings.domain.AppSettings
@@ -20,6 +21,7 @@ class DataStoreSettingsRepository(private val dataStore: DataStore<Preferences>)
             monitoringEnabled = prefs[PreferenceKeys.MONITORING_ENABLED] ?: true,
             onboardingCompleted = prefs[PreferenceKeys.ONBOARDING_COMPLETED] ?: false,
             quietHours = prefs.toQuietHours(),
+            themeMode = prefs[PreferenceKeys.THEME_MODE].toThemeMode(),
         )
     }.distinctUntilChanged()
 
@@ -35,9 +37,16 @@ class DataStoreSettingsRepository(private val dataStore: DataStore<Preferences>)
         dataStore.edit { prefs -> prefs.write(transform(prefs.toQuietHours())) }
     }
 
+    override suspend fun setThemeMode(mode: ThemeMode) {
+        dataStore.edit { it[PreferenceKeys.THEME_MODE] = mode.name }
+    }
+
     override suspend fun setOnboardingCompleted(completed: Boolean) {
         dataStore.edit { it[PreferenceKeys.ONBOARDING_COMPLETED] = completed }
     }
+
+    private fun String?.toThemeMode(): ThemeMode =
+        ThemeMode.entries.firstOrNull { it.name == this } ?: ThemeMode.System
 
     private fun Preferences.toQuietHours(): QuietHours {
         val defaults = QuietHours()

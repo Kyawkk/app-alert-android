@@ -23,4 +23,5 @@ internal val AppAlertTypography = Typography(
     bodyMedium = Default.bodyMedium.copy(fontSize = 15.sp, lineHeight = 22.sp),
     bodySmall = Default.bodySmall.copy(fontSize = 13.sp, lineHeight = 18.sp),
     labelMedium = Default.labelMedium.copy(fontSize = 13.sp),
+    labelSmall = Default.labelSmall.copy(fontSize = 12.sp, lineHeight = 16.sp),
 )

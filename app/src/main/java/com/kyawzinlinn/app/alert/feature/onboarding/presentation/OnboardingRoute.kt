@@ -52,7 +52,6 @@ fun OnboardingRoute(
                     state = appsState,
                     onAction = applicationsViewModel::onAction,
                     onOpenDetails = {},
-                    modifier = Modifier.padding(0.dp),
                     showTitle = false,
                 )
             }

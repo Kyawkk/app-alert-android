@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
+import com.kyawzinlinn.app.alert.core.designsystem.theme.Dimens
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 
 @Composable
@@ -39,7 +40,7 @@ fun AppAlertPermissionCard(
                 imageVector = if (granted) Icons.Default.CheckCircle else Icons.Default.Warning,
                 contentDescription = null,
                 tint = if (granted) extended.success else extended.warning,
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(Dimens.iconSize),
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(title, style = MaterialTheme.typography.titleSmall)

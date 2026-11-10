@@ -25,6 +25,7 @@ import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertSectionHea
 import com.kyawzinlinn.app.alert.core.designsystem.preview.AppAlertPreviews
 import com.kyawzinlinn.app.alert.core.designsystem.preview.PreviewText
 import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
+import com.kyawzinlinn.app.alert.core.designsystem.theme.Dimens
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 import com.kyawzinlinn.app.alert.core.ui.AppIcon
 import com.kyawzinlinn.app.alert.core.ui.AppUiModel
@@ -56,7 +57,7 @@ fun SelectedAppsSection(
                     items(apps, key = { it.packageName }) { app ->
                         Column(
                             modifier = Modifier
-                                .width(72.dp)
+                                .width(Dimens.appTileWidth)
                                 .clickable { onOpenApp(app.packageName) }
                                 .padding(vertical = Spacing.xxs),
                             horizontalAlignment = Alignment.CenterHorizontally,

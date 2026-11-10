@@ -1,6 +1,7 @@
 package com.kyawzinlinn.app.alert.core.designsystem.components
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +27,7 @@ fun AppAlertCard(
         shape = MaterialTheme.shapes.large,
         color = containerColor,
         shadowElevation = 1.dp,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
     ) {
         Column(
             modifier = Modifier

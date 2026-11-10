@@ -45,6 +45,7 @@ import com.kyawzinlinn.app.alert.feature.settings.data.DataStoreSettingsReposito
 import com.kyawzinlinn.app.alert.feature.settings.domain.CompleteOnboardingUseCase
 import com.kyawzinlinn.app.alert.feature.settings.domain.ObserveAppSettingsUseCase
 import com.kyawzinlinn.app.alert.feature.settings.domain.SetMonitoringEnabledUseCase
+import com.kyawzinlinn.app.alert.feature.settings.domain.SetThemeModeUseCase
 import com.kyawzinlinn.app.alert.feature.settings.domain.SettingsRepository
 import com.kyawzinlinn.app.alert.feature.settings.domain.UpdateQuietHoursUseCase
 import kotlinx.coroutines.CoroutineScope
@@ -94,6 +95,7 @@ class AppContainer(context: Context) {
     val observeAppSettings = ObserveAppSettingsUseCase(settingsRepository)
     val setMonitoringEnabled = SetMonitoringEnabledUseCase(settingsRepository)
     val updateQuietHours = UpdateQuietHoursUseCase(settingsRepository)
+    val setThemeMode = SetThemeModeUseCase(settingsRepository)
     val completeOnboarding = CompleteOnboardingUseCase(settingsRepository)
     val getNotificationHistory by lazy { GetNotificationHistoryUseCase(alertHistoryRepository) }
     val clearHistory by lazy { ClearHistoryUseCase(alertHistoryRepository) }

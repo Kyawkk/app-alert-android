@@ -40,6 +40,7 @@ import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertCard
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertSwitchRow
 import com.kyawzinlinn.app.alert.core.designsystem.preview.AppAlertPreviews
 import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
+import com.kyawzinlinn.app.alert.core.designsystem.theme.Dimens
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 import com.kyawzinlinn.app.alert.feature.dashboard.domain.MonitoringStatus
 
@@ -127,12 +128,12 @@ fun MonitoringStatusCard(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(44.dp)
+                        .size(Dimens.badgeSize)
                         .clip(CircleShape)
                         .background(shownPalette.accent.copy(alpha = 0.16f)),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Icon(content.icon, contentDescription = null, tint = shownPalette.accent, modifier = Modifier.size(26.dp))
+                    Icon(content.icon, contentDescription = null, tint = shownPalette.accent, modifier = Modifier.size(Dimens.iconSize))
                 }
                 Column(Modifier.weight(1f)) {
                     Text(content.title, style = MaterialTheme.typography.titleLarge, color = shownPalette.onContainer)

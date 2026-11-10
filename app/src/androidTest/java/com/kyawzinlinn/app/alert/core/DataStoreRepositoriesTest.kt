@@ -2,8 +2,11 @@ package com.kyawzinlinn.app.alert.core
 
 import android.content.Context
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.edit
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.kyawzinlinn.app.alert.core.common.ThemeMode
+import com.kyawzinlinn.app.alert.core.datastore.PreferenceKeys
 import com.kyawzinlinn.app.alert.feature.alarm.data.DataStoreAlarmSettingsRepository
 import com.kyawzinlinn.app.alert.feature.alarm.domain.AlarmSettings
 import com.kyawzinlinn.app.alert.feature.settings.data.DataStoreSettingsRepository
@@ -47,6 +50,16 @@ class DataStoreRepositoriesTest {
         assertFalse(settings.onboardingCompleted)
         assertEquals(QuietHours(), settings.quietHours)
         assertEquals(AlarmSettings(), DataStoreAlarmSettingsRepository(newStore()).observe().first())
+    }
+
+    @Test fun themeModeIsPersistedAndUnknownValuesFallBackToSystem() = runBlocking {
+        val store = newStore()
+        val repository = DataStoreSettingsRepository(store)
+        assertEquals(ThemeMode.System, repository.observe().first().themeMode)
+        repository.setThemeMode(ThemeMode.Dark)
+        assertEquals(ThemeMode.Dark, DataStoreSettingsRepository(store).observe().first().themeMode)
+        store.edit { it[PreferenceKeys.THEME_MODE] = "purple" }
+        assertEquals(ThemeMode.System, repository.observe().first().themeMode)
     }
 
     @Test fun alarmSettingsAreSanitizedAndNullSoundClearsTheKey() = runBlocking {

@@ -20,4 +20,10 @@ object Dimens {
     val contentMaxWidth: Dp = 840.dp
     val appIconSize: Dp = 44.dp
     val smallAppIconSize: Dp = 36.dp
+    val headerHeight: Dp = 56.dp
+    val iconSize: Dp = 24.dp
+    val iconSizeLarge: Dp = 48.dp
+    val heroIconSize: Dp = 72.dp
+    val badgeSize: Dp = 48.dp
+    val appTileWidth: Dp = 72.dp
 }

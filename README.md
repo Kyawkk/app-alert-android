@@ -12,7 +12,7 @@ Kotlin, Jetpack Compose, Material 3, minSdk 24.
 - Duplicate detection and a per-app cooldown
 - A monitoring status that is only "active" when Android has really bound the listener
 - Alert history (outcome only, last 30 days)
-- Phone and tablet layouts, light and dark theme
+- Phone and tablet layouts, with a System / Light / Dark theme switch (Settings > Theme)
 
 ## Run it
 

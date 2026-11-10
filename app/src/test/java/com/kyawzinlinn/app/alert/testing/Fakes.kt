@@ -1,5 +1,6 @@
 package com.kyawzinlinn.app.alert.testing
 
+import com.kyawzinlinn.app.alert.core.common.ThemeMode
 import com.kyawzinlinn.app.alert.core.common.TimeProvider
 import com.kyawzinlinn.app.alert.core.permissions.PermissionState
 import com.kyawzinlinn.app.alert.core.permissions.PermissionStatusSource
@@ -53,6 +54,7 @@ class FakeSettingsRepository(initial: AppSettings = AppSettings()) : SettingsRep
     override suspend fun updateQuietHours(transform: (QuietHours) -> QuietHours) {
         settings.value = settings.value.copy(quietHours = transform(settings.value.quietHours))
     }
+    override suspend fun setThemeMode(mode: ThemeMode) { settings.value = settings.value.copy(themeMode = mode) }
     override suspend fun setOnboardingCompleted(completed: Boolean) { settings.value = settings.value.copy(onboardingCompleted = completed) }
 }
 

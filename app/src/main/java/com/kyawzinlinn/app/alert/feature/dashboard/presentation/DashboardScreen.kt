@@ -21,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertScreenHeader
+import com.kyawzinlinn.app.alert.core.designsystem.motion.entrance
 import com.kyawzinlinn.app.alert.core.designsystem.preview.AppAlertPreviews
 import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
@@ -69,28 +71,34 @@ private fun DashboardContent(
     onOpenNotificationAccess: () -> Unit,
 ) {
     val statusCard: @Composable () -> Unit = {
-        MonitoringStatusCard(
-            status = state.monitoringStatus,
-            isMonitoringEnabled = state.isMonitoringEnabled,
-            selectedCount = state.selectedApps.size,
-            onMonitoringChange = { onAction(DashboardAction.SetMonitoringEnabled(it)) },
-            onOpenNotificationAccess = onOpenNotificationAccess,
-            onChooseApps = onOpenApplications,
-        )
+        Box(Modifier.entrance(0)) {
+            MonitoringStatusCard(
+                status = state.monitoringStatus,
+                isMonitoringEnabled = state.isMonitoringEnabled,
+                selectedCount = state.selectedApps.size,
+                onMonitoringChange = { onAction(DashboardAction.SetMonitoringEnabled(it)) },
+                onOpenNotificationAccess = onOpenNotificationAccess,
+                onChooseApps = onOpenApplications,
+            )
+        }
     }
     val appsSection: @Composable () -> Unit = {
-        SelectedAppsSection(state.selectedApps, onOpenApplications, onOpenApp)
+        Box(Modifier.entrance(1)) { SelectedAppsSection(state.selectedApps, onOpenApplications, onOpenApp) }
     }
     val alarmCard: @Composable () -> Unit = {
-        AlarmShortcutCard(
-            isAlarmPlaying = state.isAlarmPlaying,
-            failure = state.alarmFailure,
-            onTestAlarm = { onAction(DashboardAction.TestAlarm) },
-            onStopAlarm = { onAction(DashboardAction.StopAlarm) },
-            onOpenAlarmSettings = onOpenAlarmSettings,
-        )
+        Box(Modifier.entrance(2)) {
+            AlarmShortcutCard(
+                isAlarmPlaying = state.isAlarmPlaying,
+                failure = state.alarmFailure,
+                onTestAlarm = { onAction(DashboardAction.TestAlarm) },
+                onStopAlarm = { onAction(DashboardAction.StopAlarm) },
+                onOpenAlarmSettings = onOpenAlarmSettings,
+            )
+        }
     }
-    val alertsSection: @Composable () -> Unit = { RecentAlertsSection(state.recentAlerts, onOpenHistory) }
+    val alertsSection: @Composable () -> Unit = {
+        Box(Modifier.entrance(3)) { RecentAlertsSection(state.recentAlerts, onOpenHistory) }
+    }
 
     Column(
         modifier = Modifier
@@ -118,18 +126,7 @@ private fun DashboardContent(
 
 @Composable
 private fun DashboardHeader(onOpenSettings: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = Spacing.sm),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            "App Alert",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.semantics { heading() },
-        )
+    AppAlertScreenHeader("App Alert") {
         IconButton(onClick = onOpenSettings) {
             Icon(Icons.Default.Settings, contentDescription = "Settings")
         }

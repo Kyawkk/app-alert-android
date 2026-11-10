@@ -26,6 +26,7 @@ import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButtonStyl
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertPermissionCard
 import com.kyawzinlinn.app.alert.core.designsystem.preview.AppAlertPreviews
 import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
+import com.kyawzinlinn.app.alert.core.designsystem.theme.Dimens
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 import com.kyawzinlinn.app.alert.core.permissions.PermissionState
 
@@ -41,7 +42,7 @@ fun OnboardingIntroStep(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Spacing.md),
     ) {
-        Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(72.dp))
+        Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(Dimens.heroIconSize))
         Text(
             title,
             style = MaterialTheme.typography.headlineMedium,

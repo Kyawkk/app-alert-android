@@ -1,5 +1,6 @@
 package com.kyawzinlinn.app.alert.feature.settings.domain
 
+import com.kyawzinlinn.app.alert.core.common.ThemeMode
 import kotlinx.coroutines.flow.Flow
 
 class ObserveAppSettingsUseCase(private val repository: SettingsRepository) {
@@ -25,4 +26,8 @@ class UpdateQuietHoursUseCase(private val repository: SettingsRepository) {
 
 class CompleteOnboardingUseCase(private val repository: SettingsRepository) {
     suspend operator fun invoke() = repository.setOnboardingCompleted(true)
+}
+
+class SetThemeModeUseCase(private val repository: SettingsRepository) {
+    suspend operator fun invoke(mode: ThemeMode) = repository.setThemeMode(mode)
 }

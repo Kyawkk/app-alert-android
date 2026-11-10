@@ -28,6 +28,7 @@ import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButtonStyl
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertCard
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertDialog
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertEmptyState
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertScreenHeader
 import com.kyawzinlinn.app.alert.core.designsystem.preview.AppAlertPreviews
 import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
@@ -48,16 +49,7 @@ fun HistoryScreen(
 
     ConstrainedWidth(modifier) {
         Column(Modifier.fillMaxSize().padding(horizontal = Spacing.md)) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    "History",
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.semantics { heading() },
-                )
+            AppAlertScreenHeader("History") {
                 if (state.alerts.isNotEmpty()) {
                     AppAlertButton("Clear", { confirmClear = true }, style = AppAlertButtonStyle.Text)
                 }

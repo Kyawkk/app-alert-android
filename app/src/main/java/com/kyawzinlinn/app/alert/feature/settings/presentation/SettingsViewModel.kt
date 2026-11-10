@@ -6,6 +6,7 @@ import com.kyawzinlinn.app.alert.core.common.launchCatching
 import com.kyawzinlinn.app.alert.core.permissions.PermissionStatusSource
 import com.kyawzinlinn.app.alert.feature.settings.domain.ObserveAppSettingsUseCase
 import com.kyawzinlinn.app.alert.feature.settings.domain.QuietHours
+import com.kyawzinlinn.app.alert.feature.settings.domain.SetThemeModeUseCase
 import com.kyawzinlinn.app.alert.feature.settings.domain.UpdateQuietHoursUseCase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,12 +17,18 @@ class SettingsViewModel(
     observeAppSettings: ObserveAppSettingsUseCase,
     private val permissionStatusSource: PermissionStatusSource,
     private val updateQuietHours: UpdateQuietHoursUseCase,
+    private val setThemeMode: SetThemeModeUseCase,
 ) : ViewModel() {
 
     val uiState: StateFlow<SettingsUiState> = combine(
         observeAppSettings(), permissionStatusSource.state,
     ) { settings, permissions ->
-        SettingsUiState(isLoading = false, quietHours = settings.quietHours, permissions = permissions)
+        SettingsUiState(
+            isLoading = false,
+            quietHours = settings.quietHours,
+            permissions = permissions,
+            themeMode = settings.themeMode,
+        )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
 
     fun onAction(action: SettingsAction) {
@@ -32,6 +39,7 @@ class SettingsViewModel(
             is SettingsAction.QuietDayToggled -> edit {
                 it.copy(days = if (action.isoDay in it.days) it.days - action.isoDay else it.days + action.isoDay)
             }
+            is SettingsAction.ThemeModeChanged -> viewModelScope.launchCatching { setThemeMode(action.mode) }
             SettingsAction.RefreshPermissions -> permissionStatusSource.refresh()
         }
     }

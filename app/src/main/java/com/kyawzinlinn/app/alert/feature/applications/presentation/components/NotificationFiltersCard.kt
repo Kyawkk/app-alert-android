@@ -1,15 +1,24 @@
 package com.kyawzinlinn.app.alert.feature.applications.presentation.components
 
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertCardHeader
 import android.app.Notification
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertSupportingText
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertFieldLabel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertFilterChip
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertTextField
 import androidx.compose.material3.Text
+import androidx.compose.runtime.remember
+import androidx.compose.material3.InputChipDefaults
+import androidx.compose.material3.InputChip
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButton
@@ -45,42 +54,63 @@ fun NotificationFiltersCard(
     modifier: Modifier = Modifier,
 ) {
     AppAlertCard(modifier = modifier) {
-        Text("Filters", style = MaterialTheme.typography.titleMedium)
-        Text(
+        AppAlertCardHeader("Filters")
+        AppAlertSupportingText(
             "Leave empty to be alerted about every notification from this app.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        OutlinedTextField(
+        AppAlertTextField(
             value = keywords,
             onValueChange = { onAction(AppRuleDetailAction.KeywordsChanged(it)) },
-            modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm),
-            label = { Text("Keywords (comma separated)") },
-            supportingText = { Text("Alarm only if one of them appears") },
+            modifier = Modifier.padding(top = Spacing.sm),
+            label = "Keywords (comma separated)",
+            supportingText = "Alarm only if one of them appears",
+            singleLine = false,
         )
+        val keywordList = remember(keywords) {
+            keywords.split(',').map { it.trim() }.filter { it.isNotEmpty() }
+        }
+        if (keywordList.isNotEmpty()) {
+            FlowRow(
+                modifier = Modifier.padding(top = Spacing.xs),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
+            ) {
+                keywordList.forEach { word ->
+                    InputChip(
+                        selected = false,
+                        onClick = {
+                            onAction(AppRuleDetailAction.KeywordsChanged((keywordList - word).joinToString(", ")))
+                        },
+                        label = { Text(word) },
+                        trailingIcon = {
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = "Remove $word",
+                                modifier = Modifier.size(InputChipDefaults.IconSize),
+                            )
+                        },
+                    )
+                }
+            }
+        }
         FlowRow(
             modifier = Modifier.padding(top = Spacing.xs),
             horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
         ) {
             ScopeOptions.forEach { (option, label) ->
-                FilterChip(
+                AppAlertFilterChip(
                     selected = scope == option,
                     onClick = { onAction(AppRuleDetailAction.ScopeChanged(option)) },
-                    label = { Text(label) },
+                    label = label,
                 )
             }
         }
-        Text(
-            "Notification types",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(top = Spacing.sm),
-        )
+        AppAlertFieldLabel("Notification types", Modifier.padding(top = Spacing.sm))
         FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.xs)) {
             CategoryOptions.forEach { (value, label) ->
-                FilterChip(
+                AppAlertFilterChip(
                     selected = value in categories,
                     onClick = { onAction(AppRuleDetailAction.CategoryToggled(value)) },
-                    label = { Text(label) },
+                    label = label,
                 )
             }
         }

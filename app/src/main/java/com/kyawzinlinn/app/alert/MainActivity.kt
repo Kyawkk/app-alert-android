@@ -1,5 +1,6 @@
 package com.kyawzinlinn.app.alert
 
+import androidx.compose.runtime.getValue
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,7 +9,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyawzinlinn.app.alert.app.AppContainer

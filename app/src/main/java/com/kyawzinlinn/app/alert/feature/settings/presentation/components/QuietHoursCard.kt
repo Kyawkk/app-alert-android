@@ -1,20 +1,21 @@
 package com.kyawzinlinn.app.alert.feature.settings.presentation.components
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.animation.AnimatedVisibility
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertSupportingText
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertFieldLabel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.FilterChip
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertFilterChip
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButton
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButtonStyle
@@ -62,19 +63,18 @@ fun QuietHoursCard(
                     )
                 }
                 if (quietHours.endMinuteOfDay <= quietHours.startMinuteOfDay) {
-                    Text(
+                    AppAlertSupportingText(
                         "This window continues past midnight into the next day.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-                Text("Days the window starts", style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(top = Spacing.xs))
+                AppAlertFieldLabel("Days the window starts", Modifier.padding(top = Spacing.xs))
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.xs)) {
                     DayLabels.forEach { (day, label) ->
-                        FilterChip(
+                        AppAlertFilterChip(
                             selected = day in quietHours.days,
                             onClick = { onAction(SettingsAction.QuietDayToggled(day)) },
-                            label = { Text(label) },
+                            label = label,
                         )
                     }
                 }

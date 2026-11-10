@@ -1,6 +1,7 @@
 package com.kyawzinlinn.app.alert.feature.onboarding.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertSupportingText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,7 +21,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButton
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButtonStyle
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertPermissionCard
@@ -79,10 +79,9 @@ fun OnboardingAccessStep(
             onAction = onOpenNotificationAccess,
         )
         if (!permissions.notificationAccessGranted) {
-            Text(
+            AppAlertSupportingText(
                 "You can continue without it, but no alarm will ring until access is on.",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

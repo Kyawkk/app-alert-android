@@ -1,9 +1,9 @@
 package com.kyawzinlinn.app.alert.feature.alarm.presentation.components
 
 import androidx.compose.animation.AnimatedVisibility
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertSupportingText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.padding
@@ -31,10 +31,9 @@ fun VolumeAndDurationCard(
             valueText = { "$it%" },
             onValueChangeFinished = { onAction(AlarmAction.VolumeChanged(it)) },
         )
-        Text(
+        AppAlertSupportingText(
             "Relative to your phone's alarm volume. App Alert never changes the system volume.",
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         AppAlertSlider(
             label = "Duration",
@@ -92,10 +91,9 @@ fun RepeatAndCooldownCard(
             onValueChangeFinished = { onAction(AlarmAction.CooldownChanged(it)) },
             modifier = Modifier.padding(top = Spacing.sm),
         )
-        Text(
+        AppAlertSupportingText(
             "After an alarm, further notifications from the same app stay silent for this long.",
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

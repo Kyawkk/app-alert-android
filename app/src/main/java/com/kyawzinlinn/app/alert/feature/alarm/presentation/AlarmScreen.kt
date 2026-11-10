@@ -1,21 +1,15 @@
 package com.kyawzinlinn.app.alert.feature.alarm.presentation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertScrollableContent
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertLoading
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertTopBar
 import com.kyawzinlinn.app.alert.core.designsystem.preview.AppAlertPreviews
 import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
-import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
-import com.kyawzinlinn.app.alert.core.ui.ConstrainedWidth
+import com.kyawzinlinn.app.alert.core.designsystem.components.ConstrainedWidth
 import com.kyawzinlinn.app.alert.core.ui.SoundPickerActions
 import com.kyawzinlinn.app.alert.feature.alarm.domain.AlarmSettings
 import com.kyawzinlinn.app.alert.feature.alarm.presentation.components.RepeatAndCooldownCard
@@ -35,15 +29,9 @@ fun AlarmScreen(
         AppAlertTopBar(title = "Alarm", onBack = onBack)
         ConstrainedWidth {
             if (state.isLoading) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                AppAlertLoading()
             } else {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = Spacing.md),
-                    verticalArrangement = Arrangement.spacedBy(Spacing.md),
-                ) {
+                AppAlertScrollableContent {
                     SoundSelectionCard(
                         title = "Alarm sound",
                         soundTitle = state.soundTitle,
@@ -62,7 +50,6 @@ fun AlarmScreen(
                         onTest = { onAction(AlarmAction.TestAlarm) },
                         onStop = { onAction(AlarmAction.StopAlarm) },
                     )
-                    Box(Modifier.padding(bottom = Spacing.md))
                 }
             }
         }

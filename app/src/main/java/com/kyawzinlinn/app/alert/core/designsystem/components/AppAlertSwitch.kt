@@ -9,12 +9,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.unit.dp
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Dimens
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 
@@ -42,15 +45,41 @@ fun AppAlertSwitchRow(
         horizontalArrangement = Arrangement.spacedBy(Spacing.md),
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(title, style = MaterialTheme.typography.bodyLarge)
+            AppAlertFieldLabel(title)
             if (supportingText != null) {
-                Text(
+                AppAlertSupportingText(
                     supportingText,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
-        Switch(checked = checked, onCheckedChange = null, enabled = enabled)
+        AppAlertSwitch(checked = checked, onCheckedChange = null, enabled = enabled)
     }
+}
+
+@Composable
+fun AppAlertSwitch(
+    checked: Boolean,
+    onCheckedChange: ((Boolean) -> Unit)?,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    val thumb: (@Composable () -> Unit)? = if (checked) {
+        {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = null,
+                modifier = Modifier.size(SwitchDefaults.IconSize),
+            )
+        }
+    } else {
+        null
+    }
+    Switch(
+        checked = checked,
+        onCheckedChange = onCheckedChange,
+        modifier = modifier,
+        thumbContent = thumb,
+        enabled = enabled,
+    )
 }

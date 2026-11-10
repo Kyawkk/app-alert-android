@@ -1,6 +1,8 @@
 package com.kyawzinlinn.app.alert.feature.applications.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertSupportingText
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertLoading
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,7 +13,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,9 +47,7 @@ fun AppRuleDetailScreen(
             onBack = onBack,
         )
         when {
-            state.isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
+            state.isLoading -> AppAlertLoading()
             !state.isSelected -> AppAlertEmptyState(
                 icon = Icons.Default.Info,
                 title = "Not monitored",
@@ -81,12 +80,10 @@ private fun DetailContent(
                 AppIcon(state.packageName, state.label)
                 Column(Modifier.weight(1f)) {
                     Text(state.label, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    Text(
+                    AppAlertSupportingText(
                         state.packageName,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }

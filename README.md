@@ -14,6 +14,27 @@ Kotlin, Jetpack Compose, Material 3, minSdk 24.
 - Alert history (outcome only, last 30 days)
 - Phone and tablet layouts, with a System / Light / Dark theme switch (Settings > Theme)
 
+## Screenshots
+
+<p>
+  <img src="screenshots/phone-home.png" width="19%" alt="Home" />
+  <img src="screenshots/phone-apps.png" width="19%" alt="Applications" />
+  <img src="screenshots/phone-app-rules.png" width="19%" alt="Per-app sound and filters" />
+  <img src="screenshots/phone-history.png" width="19%" alt="History" />
+  <img src="screenshots/phone-settings.png" width="19%" alt="Settings" />
+</p>
+
+On tablets and landscape the bottom bar becomes a navigation rail and Applications shows a list and detail side by side.
+
+<p>
+  <img src="screenshots/tablet-home.png" width="49%" alt="Home on a tablet" />
+  <img src="screenshots/tablet-apps.png" width="49%" alt="Applications on a tablet" />
+</p>
+<p>
+  <img src="screenshots/tablet-history.png" width="49%" alt="History on a tablet" />
+  <img src="screenshots/tablet-settings.png" width="49%" alt="Settings on a tablet" />
+</p>
+
 ## Run it
 
 Open the project in a recent Android Studio and run the `app` configuration, ideally on a physical device. Android requires you to turn on Notification access yourself (Settings > Notifications > Device & app notifications). The onboarding opens that screen for you.

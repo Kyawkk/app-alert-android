@@ -1,32 +1,25 @@
 package com.kyawzinlinn.app.alert.feature.dashboard.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertLoading
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
-import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertScreenHeader
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertCollapsingScreen
 import com.kyawzinlinn.app.alert.core.designsystem.motion.entrance
 import com.kyawzinlinn.app.alert.core.designsystem.preview.AppAlertPreviews
 import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
-import com.kyawzinlinn.app.alert.core.ui.ConstrainedWidth
 import com.kyawzinlinn.app.alert.core.ui.WindowWidth
 import com.kyawzinlinn.app.alert.feature.dashboard.presentation.components.AlarmShortcutCard
 import com.kyawzinlinn.app.alert.feature.dashboard.presentation.components.MonitoringStatusCard
@@ -46,13 +39,21 @@ fun DashboardScreen(
     onOpenNotificationAccess: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ConstrainedWidth(modifier) {
+    AppAlertCollapsingScreen(
+        title = "App Alert",
+        modifier = modifier,
+        actions = {
+            IconButton(onClick = onOpenSettings) {
+                Icon(Icons.Default.Settings, contentDescription = "Settings")
+            }
+        },
+    ) {
         if (state.isLoading) {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+            AppAlertLoading()
         } else {
             DashboardContent(
                 state, windowWidth, onAction, onOpenApplications, onOpenApp,
-                onOpenHistory, onOpenSettings, onOpenAlarmSettings, onOpenNotificationAccess,
+                onOpenHistory, onOpenAlarmSettings, onOpenNotificationAccess,
             )
         }
     }
@@ -66,7 +67,6 @@ private fun DashboardContent(
     onOpenApplications: () -> Unit,
     onOpenApp: (String) -> Unit,
     onOpenHistory: () -> Unit,
-    onOpenSettings: () -> Unit,
     onOpenAlarmSettings: () -> Unit,
     onOpenNotificationAccess: () -> Unit,
 ) {
@@ -107,7 +107,6 @@ private fun DashboardContent(
             .padding(horizontal = Spacing.md),
         verticalArrangement = Arrangement.spacedBy(Spacing.md),
     ) {
-        DashboardHeader(onOpenSettings)
         if (windowWidth == WindowWidth.Compact) {
             statusCard(); appsSection(); alarmCard(); alertsSection()
         } else {
@@ -121,15 +120,6 @@ private fun DashboardContent(
             }
         }
         Box(Modifier.padding(bottom = Spacing.md))
-    }
-}
-
-@Composable
-private fun DashboardHeader(onOpenSettings: () -> Unit) {
-    AppAlertScreenHeader("App Alert") {
-        IconButton(onClick = onOpenSettings) {
-            Icon(Icons.Default.Settings, contentDescription = "Settings")
-        }
     }
 }
 

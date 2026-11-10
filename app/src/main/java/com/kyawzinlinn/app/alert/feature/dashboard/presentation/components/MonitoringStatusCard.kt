@@ -1,5 +1,6 @@
 package com.kyawzinlinn.app.alert.feature.dashboard.presentation.components
 
+import androidx.compose.runtime.getValue
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeIn
@@ -27,13 +28,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.dp
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButton
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButtonStyle
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertCard
@@ -108,7 +107,11 @@ fun MonitoringStatusCard(
     val palette = status.content(selectedCount).tone.palette()
     val container by animateColorAsState(palette.container, tween(250), label = "statusContainer")
 
-    AppAlertCard(modifier = modifier, containerColor = container) {
+    AppAlertCard(
+        modifier = modifier,
+        containerColor = container,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+    ) {
         AnimatedContent(
             targetState = status,
             transitionSpec = { fadeIn(tween(220)) togetherWith fadeOut(tween(120)) },

@@ -1,6 +1,7 @@
 package com.kyawzinlinn.app.alert.core.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertSupportingText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,16 +35,14 @@ fun AlertListItem(
         AppIcon(alert.packageName, alert.appLabel, size = Dimens.smallAppIconSize)
         Column(modifier = Modifier.weight(1f)) {
             Text(alert.appLabel, style = MaterialTheme.typography.bodyLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Text(
+            AppAlertSupportingText(
                 alert.outcome.label(),
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        Text(
+        AppAlertSupportingText(
             formatRelativeTime(alert.timestampMillis, nowMillis),
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

@@ -1,5 +1,6 @@
 package com.kyawzinlinn.app.alert.feature.onboarding.presentation
 
+import androidx.compose.runtime.getValue
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -20,10 +21,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
@@ -33,7 +32,7 @@ import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButtonStyl
 import com.kyawzinlinn.app.alert.core.designsystem.preview.AppAlertPreviews
 import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
-import com.kyawzinlinn.app.alert.core.ui.ConstrainedWidth
+import com.kyawzinlinn.app.alert.core.designsystem.components.ConstrainedWidth
 import com.kyawzinlinn.app.alert.feature.onboarding.presentation.components.OnboardingAccessStep
 import com.kyawzinlinn.app.alert.feature.onboarding.presentation.components.OnboardingDndStep
 import com.kyawzinlinn.app.alert.feature.onboarding.presentation.components.OnboardingDoneStep

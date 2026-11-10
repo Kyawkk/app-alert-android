@@ -1,10 +1,10 @@
 package com.kyawzinlinn.app.alert.feature.onboarding.presentation
 
+import androidx.compose.runtime.getValue
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp

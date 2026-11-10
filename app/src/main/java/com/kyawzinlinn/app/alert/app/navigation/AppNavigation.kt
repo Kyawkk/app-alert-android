@@ -1,5 +1,6 @@
 package com.kyawzinlinn.app.alert.app.navigation
 
+import androidx.compose.runtime.getValue
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -7,13 +8,12 @@ import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -60,26 +60,32 @@ private fun AppAlertNavigation(factory: AppViewModelFactory, startWithOnboarding
 
     val selectedRoute = rememberTopLevelRoute(currentRoute, showNavigation)
 
-    Row(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        AnimatedVisibility(
-            visible = showNavigation && !isCompact,
-            enter = expandHorizontally(tween(300, easing = FastOutSlowInEasing)) + fadeIn(tween(300)),
-            exit = shrinkHorizontally(tween(220, easing = FastOutSlowInEasing)) + fadeOut(tween(160)),
-        ) {
-            AppAlertNavigationRail(selectedRoute, navigateTopLevel)
-        }
-        AnimatedBottomBarScaffold(
-            barVisible = showNavigation && isCompact,
-            bottomBar = { AppAlertBottomBar(selectedRoute, navigateTopLevel) },
-            modifier = Modifier.weight(1f),
-        ) {
-            AppNavHost(
-                navController = navController,
-                startRoute = startRoute,
-                factory = factory,
-                onNavigateTopLevel = navigateTopLevel,
-                modifier = Modifier.fillMaxSize(),
-            )
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground,
+    ) {
+        Row(Modifier.fillMaxSize()) {
+            AnimatedVisibility(
+                visible = showNavigation && !isCompact,
+                enter = expandHorizontally(tween(300, easing = FastOutSlowInEasing)) + fadeIn(tween(300)),
+                exit = shrinkHorizontally(tween(220, easing = FastOutSlowInEasing)) + fadeOut(tween(160)),
+            ) {
+                AppAlertNavigationRail(selectedRoute, navigateTopLevel)
+            }
+            AnimatedBottomBarScaffold(
+                barVisible = showNavigation && isCompact,
+                bottomBar = { AppAlertBottomBar(selectedRoute, navigateTopLevel) },
+                modifier = Modifier.weight(1f),
+            ) {
+                AppNavHost(
+                    navController = navController,
+                    startRoute = startRoute,
+                    factory = factory,
+                    onNavigateTopLevel = navigateTopLevel,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
         }
     }
 }

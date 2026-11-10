@@ -1,40 +1,33 @@
 package com.kyawzinlinn.app.alert.feature.history.presentation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertSupportingText
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertLoading
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButton
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButtonStyle
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertCard
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertDialog
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertEmptyState
-import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertScreenHeader
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertCollapsingScreen
 import com.kyawzinlinn.app.alert.core.designsystem.preview.AppAlertPreviews
 import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 import com.kyawzinlinn.app.alert.core.ui.AlertListItem
 import com.kyawzinlinn.app.alert.core.ui.AlertUiModel
-import com.kyawzinlinn.app.alert.core.ui.ConstrainedWidth
 import com.kyawzinlinn.app.alert.core.ui.rememberCurrentTimeMillis
 import com.kyawzinlinn.app.alert.feature.history.domain.AlertHistoryRepository
 import com.kyawzinlinn.app.alert.feature.history.domain.AlertOutcome
@@ -47,24 +40,24 @@ fun HistoryScreen(
 ) {
     var confirmClear by rememberSaveable { mutableStateOf(false) }
 
-    ConstrainedWidth(modifier) {
-        Column(Modifier.fillMaxSize().padding(horizontal = Spacing.md)) {
-            AppAlertScreenHeader("History") {
-                if (state.alerts.isNotEmpty()) {
-                    AppAlertButton("Clear", { confirmClear = true }, style = AppAlertButtonStyle.Text)
-                }
+    AppAlertCollapsingScreen(
+        title = "History",
+        modifier = modifier,
+        actions = {
+            if (state.alerts.isNotEmpty()) {
+                AppAlertButton("Clear", { confirmClear = true }, style = AppAlertButtonStyle.Text)
             }
-            Text(
+        },
+    ) {
+        Column(Modifier.fillMaxSize().padding(horizontal = Spacing.md)) {
+            AppAlertSupportingText(
                 "Kept for ${AlertHistoryRepository.RETENTION_DAYS} days, up to ${AlertHistoryRepository.MAX_ENTRIES} entries. " +
                     "Message contents are never stored.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(bottom = Spacing.sm),
+                style = MaterialTheme.typography.bodySmall,
             )
             when {
-                state.isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
+                state.isLoading -> AppAlertLoading()
                 state.alerts.isEmpty() -> AppAlertEmptyState(
                     icon = Icons.Default.DateRange,
                     title = "No history yet",

@@ -1,5 +1,6 @@
 package com.kyawzinlinn.app.alert.core.ui
 
+import androidx.compose.runtime.getValue
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -9,7 +10,6 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.core.content.IntentCompat

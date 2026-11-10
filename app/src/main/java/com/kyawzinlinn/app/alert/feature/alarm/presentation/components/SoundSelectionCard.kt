@@ -1,6 +1,8 @@
 package com.kyawzinlinn.app.alert.feature.alarm.presentation.components
 
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertCardHeader
 import androidx.compose.foundation.layout.Arrangement
+import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertErrorText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -31,7 +33,7 @@ fun SoundSelectionCard(
     resetText: String = "Use default",
 ) {
     AppAlertCard(modifier = modifier) {
-        Text(title, style = MaterialTheme.typography.titleMedium)
+        AppAlertCardHeader(title)
         Text(
             soundTitle,
             style = MaterialTheme.typography.bodyLarge,
@@ -41,12 +43,7 @@ fun SoundSelectionCard(
             modifier = Modifier.padding(top = Spacing.xxs),
         )
         if (rejected) {
-            Text(
-                "That sound can't be played, so it wasn't saved. Choose another one.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(top = Spacing.xxs),
-            )
+            AppAlertErrorText("That sound can't be played, so it wasn't saved. Choose another one.", Modifier.padding(top = Spacing.xxs))
         }
         FlowRow(
             modifier = Modifier.padding(top = Spacing.sm),

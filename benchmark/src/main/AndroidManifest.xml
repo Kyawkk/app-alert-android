@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Package visibility: lets the benchmark find the launch intent of the app it measures. -->
+    <queries>
+        <package android:name="com.kyawzinlinn.app.alert" />
+    </queries>
+</manifest>

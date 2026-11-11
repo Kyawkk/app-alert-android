@@ -1,0 +1,64 @@
+name: Benchmark
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['perf/**']
+
+concurrency:
+  group: benchmark-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  jvm-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Notification pipeline microbenchmark
+        env:
+          RUN_BENCHMARKS: "1"
+        run: ./gradlew :app:cleanTestDebugUnitTest :app:testDebugUnitTest --tests '*NotificationPipelineBenchmarkTest'
+
+      - name: Release APK size
+        run: ./scripts/benchmark-size.sh
+
+      - name: Build time
+        run: python3 scripts/benchmark_build.py --runs 2
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Benchmark results (${GITHUB_SHA::7})"
+            for f in notification-pipeline size build-time; do
+              path="build/benchmark-results/$f.json"
+              [ -f "$path" ] || path="app/build/benchmark-results/$f.json"
+              [ -f "$path" ] || continue
+              echo "**$f**"
+              echo '```json'
+              cat "$path"
+              echo '```'
+            done
+            echo "Startup and frame timing need a real device: see benchmark/README.md."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: benchmark-results-${{ github.sha }}
+          path: |
+            build/benchmark-results/
+            app/build/benchmark-results/
+          if-no-files-found: ignore

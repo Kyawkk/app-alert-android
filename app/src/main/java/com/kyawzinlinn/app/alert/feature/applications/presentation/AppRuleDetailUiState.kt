@@ -14,7 +14,7 @@ data class AppRuleDetailUiState(
     val soundTitle: String = "",
     val soundUri: String? = null,
     val soundRejected: Boolean = false,
-    val keywordsInput: String = "",
+    val keywords: List<String> = emptyList(),
     val keywordScope: KeywordScope = KeywordScope.TITLE_OR_CONTENT,
     val categories: Set<String> = emptySet(),
     val filtersChanged: Boolean = false,

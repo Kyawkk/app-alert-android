@@ -33,7 +33,13 @@ class AppAlertNotificationListenerService : NotificationListenerService() {
         if (sbn.packageName == packageName) return // never react to our own "active alarm" notification
         if (container.appRulesRepository.isSelectedOrNull(sbn.packageName) == false) return
 
-        val event = sbn.toEvent()
+        val event = try {
+            sbn.toEvent()
+        } catch (e: Exception) {
+            // extras from other apps can be malformed; skip that notification instead of crashing the service
+            Log.w(TAG, "Ignoring unreadable notification: ${e.javaClass.simpleName}")
+            return
+        }
         serviceScope.launch {
             try {
                 container.processIncomingNotification(event)

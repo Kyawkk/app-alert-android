@@ -18,6 +18,7 @@ private const val FADE_OUT_MILLIS = 120
 private val DetailRoutes = setOf(
     NavigationDestination.AppDetail.route,
     NavigationDestination.AlarmConfig.route,
+    NavigationDestination.Changelog.route,
 )
 
 private fun NavBackStackEntry.isDetail() = destination.route in DetailRoutes

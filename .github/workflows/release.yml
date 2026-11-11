@@ -16,6 +16,8 @@ jobs:
       VERSION: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: gradle/actions/wrapper-validation@v4
 
@@ -72,7 +74,20 @@ jobs:
           if [ -f app/build/outputs/mapping/release/mapping.txt ]; then
             cp app/build/outputs/mapping/release/mapping.txt "dist/mapping-${VERSION}.txt"
           fi
+          # read by the in-app updater
+          SHA=$(sha256sum "dist/app-alert-${VERSION}.apk" | cut -d' ' -f1)
+          printf '{"versionCode":%s,"versionName":"%s","apk":"app-alert-%s.apk","sha256":"%s"}\n' \
+            "${{ github.run_number }}" "${VERSION#v}" "${VERSION}" "$SHA" > dist/update.json
           cd dist && sha256sum * > SHA256SUMS.txt
+
+      - name: Write release notes
+        run: |
+          PREVIOUS=$(git describe --tags --abbrev=0 --match 'v[0-9]*' "${VERSION}^" 2>/dev/null || true)
+          python3 scripts/changelog.py --notes "$PREVIOUS" "$VERSION" > release-notes.md
+          if [ "$TEST_KEY" = "true" ]; then
+            printf 'Signed with a throwaway test key (no release secrets configured). For testing only.\n\n' | cat - release-notes.md > notes.tmp
+            mv notes.tmp release-notes.md
+          fi
 
       - name: Verify APK signature
         run: |
@@ -83,6 +98,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*
-          generate_release_notes: true
+          body_path: release-notes.md
           prerelease: ${{ contains(github.ref_name, '-') || env.TEST_KEY == 'true' }}
-          body: ${{ env.TEST_KEY == 'true' && 'Signed with a throwaway test key (no release secrets configured). For testing only.' || '' }}

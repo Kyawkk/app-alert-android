@@ -1,5 +1,11 @@
 package com.kyawzinlinn.app.alert.feature.applications.presentation
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.layout.Row
@@ -48,29 +54,45 @@ fun ApplicationsRoute(
             modifier = Modifier.weight(1f).fillMaxHeight(),
             highlightedPackage = selectedPackage,
         )
-        val pkg = selectedPackage
-        if (pkg == null) {
-            AppAlertEmptyState(
-                icon = Icons.Default.Info,
-                title = "Select an app",
-                message = "Choose \"Edit\" on a monitored app to configure it here.",
-                modifier = Modifier.weight(1f).padding(Spacing.md),
-            )
-        } else {
-            val detailViewModel: AppRuleDetailViewModel =
-                viewModel(key = "detail-$pkg", factory = factory.forPackage(pkg))
-            val detailState by detailViewModel.uiState.collectAsStateWithLifecycle()
-            val pickers = rememberSoundPickerActions { detailViewModel.onAction(AppRuleDetailAction.SoundPicked(it)) }
-            AppRuleDetailScreen(
-                state = detailState,
-                pickers = pickers,
-                onAction = { action ->
-                    detailViewModel.onAction(action)
-                    if (action == AppRuleDetailAction.Remove) selectedPackage = null
-                },
-                onBack = null,
-                modifier = Modifier.weight(1f).fillMaxHeight(),
-            )
+        // the detail pane fades and slides in when the selection changes, and the empty hint fades out
+        AnimatedContent(
+            targetState = selectedPackage,
+            modifier = Modifier.weight(1f).fillMaxHeight(),
+            transitionSpec = {
+                (fadeIn(tween(PANE_IN_MILLIS, delayMillis = PANE_OUT_MILLIS)) +
+                    slideInHorizontally(tween(PANE_SLIDE_MILLIS, delayMillis = PANE_OUT_MILLIS)) { it / PANE_SLIDE_DIVISOR }) togetherWith
+                    fadeOut(tween(PANE_OUT_MILLIS))
+            },
+            label = "applicationDetailPane",
+        ) { pkg ->
+            if (pkg == null) {
+                AppAlertEmptyState(
+                    icon = Icons.Default.Info,
+                    title = "Select an app",
+                    message = "Choose \"Edit\" on a monitored app to configure it here.",
+                    modifier = Modifier.fillMaxSize().padding(Spacing.md),
+                )
+            } else {
+                val detailViewModel: AppRuleDetailViewModel =
+                    viewModel(key = "detail-$pkg", factory = factory.forPackage(pkg))
+                val detailState by detailViewModel.uiState.collectAsStateWithLifecycle()
+                val pickers = rememberSoundPickerActions { detailViewModel.onAction(AppRuleDetailAction.SoundPicked(it)) }
+                AppRuleDetailScreen(
+                    state = detailState,
+                    pickers = pickers,
+                    onAction = { action ->
+                        detailViewModel.onAction(action)
+                        if (action == AppRuleDetailAction.Remove) selectedPackage = null
+                    },
+                    onBack = null,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
         }
     }
 }
+
+private const val PANE_IN_MILLIS = 220
+private const val PANE_OUT_MILLIS = 90
+private const val PANE_SLIDE_MILLIS = 260
+private const val PANE_SLIDE_DIVISOR = 16

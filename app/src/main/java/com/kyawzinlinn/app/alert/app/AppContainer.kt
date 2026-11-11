@@ -36,6 +36,8 @@ import com.kyawzinlinn.app.alert.feature.applications.domain.InstalledAppsReposi
 import com.kyawzinlinn.app.alert.feature.applications.domain.ObserveSelectedApplicationsUseCase
 import com.kyawzinlinn.app.alert.feature.applications.domain.UpdateAppRuleUseCase
 import com.kyawzinlinn.app.alert.feature.applications.domain.UpdateApplicationSelectionUseCase
+import com.kyawzinlinn.app.alert.feature.changelog.data.AssetChangelogRepository
+import com.kyawzinlinn.app.alert.feature.changelog.domain.GetChangelogUseCase
 import com.kyawzinlinn.app.alert.feature.dashboard.domain.ObserveMonitoringStatusUseCase
 import com.kyawzinlinn.app.alert.feature.history.data.RoomAlertHistoryRepository
 import com.kyawzinlinn.app.alert.feature.history.domain.AlertHistoryRepository
@@ -48,6 +50,11 @@ import com.kyawzinlinn.app.alert.feature.settings.domain.SetMonitoringEnabledUse
 import com.kyawzinlinn.app.alert.feature.settings.domain.SetThemeModeUseCase
 import com.kyawzinlinn.app.alert.feature.settings.domain.SettingsRepository
 import com.kyawzinlinn.app.alert.feature.settings.domain.UpdateQuietHoursUseCase
+import com.kyawzinlinn.app.alert.feature.update.data.GitHubReleaseUpdateRepository
+import com.kyawzinlinn.app.alert.feature.update.data.InstalledVersion
+import com.kyawzinlinn.app.alert.feature.update.domain.CheckForUpdateUseCase
+import com.kyawzinlinn.app.alert.feature.update.domain.DownloadUpdateUseCase
+import com.kyawzinlinn.app.alert.feature.update.domain.UpdateRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -104,6 +111,14 @@ class AppContainer(context: Context) {
             settingsRepository, appRulesRepository, permissionStatusSource, listenerConnection, timeProvider,
         )
     }
+
+    val getChangelog by lazy { GetChangelogUseCase(AssetChangelogRepository(appContext)) }
+
+    private val installedVersion = InstalledVersion(appContext)
+    val installedVersionName: String get() = installedVersion.name
+    private val updateRepository: UpdateRepository by lazy { GitHubReleaseUpdateRepository(appContext) }
+    val checkForUpdate by lazy { CheckForUpdateUseCase(updateRepository) { installedVersion.code } }
+    val downloadUpdate by lazy { DownloadUpdateUseCase(updateRepository) }
 
     private val shouldTriggerAlarm = ShouldTriggerAlarmUseCase(AlertThrottle(), timeProvider)
     val processIncomingNotification by lazy {

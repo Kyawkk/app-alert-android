@@ -47,6 +47,9 @@ class AlarmPlaybackController(
         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
         .build()
 
+    private val prefs = this.context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    private var savedAlarmVolume: Int? = null
+
     private val lock = Any()
     private var currentPlayer: MediaPlayer? = null
     private var currentJob: Job? = null
@@ -56,6 +59,10 @@ class AlarmPlaybackController(
     // losing audio focus must not silence an alarm, so changes are only logged
     private val focusListener = AudioManager.OnAudioFocusChangeListener { change ->
         Log.d(TAG, "Audio focus changed ($change); alarm keeps playing")
+    }
+
+    init {
+        restoreVolumeLeftRaised()
     }
 
     private val _isPlaying = MutableStateFlow(false)
@@ -88,6 +95,7 @@ class AlarmPlaybackController(
                 return AlarmStartResult.Started
             }
             currentPlayer = player
+            raiseAlarmVolume(request.volumePercent)
             requestFocus()
             _isPlaying.value = true
             notifier.show()
@@ -154,9 +162,55 @@ class AlarmPlaybackController(
         currentPlayer?.let { releaseQuietly(it) }
         currentPlayer = null
         vibrator?.cancel()
+        restoreAlarmVolume()
         abandonFocus()
         if (_isPlaying.value) notifier.hide()
         _isPlaying.value = false
+    }
+
+    // 100% in the app means the loudest the device can play, so the alarm stream is raised while ringing
+    private fun raiseAlarmVolume(percent: Int) {
+        val manager = audioManager ?: return
+        if (percent <= 0 || savedAlarmVolume != null) return
+        try {
+            val max = manager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
+            val before = manager.getStreamVolume(AudioManager.STREAM_ALARM)
+            if (before == max) return
+            manager.setStreamVolume(AudioManager.STREAM_ALARM, max, 0)
+            savedAlarmVolume = before
+            prefs.edit().putInt(KEY_SAVED_VOLUME, before).apply()
+        } catch (e: SecurityException) {
+            Log.w(TAG, "Cannot raise alarm volume: ${e.javaClass.simpleName}")
+        }
+    }
+
+    private fun restoreAlarmVolume() {
+        val manager = audioManager ?: return
+        val saved = savedAlarmVolume ?: return
+        savedAlarmVolume = null
+        prefs.edit().remove(KEY_SAVED_VOLUME).apply()
+        restoreIfUntouched(manager, saved)
+    }
+
+    // covers the process being killed while an alarm was ringing
+    private fun restoreVolumeLeftRaised() {
+        val manager = audioManager ?: return
+        val saved = prefs.getInt(KEY_SAVED_VOLUME, -1)
+        if (saved < 0) return
+        prefs.edit().remove(KEY_SAVED_VOLUME).apply()
+        restoreIfUntouched(manager, saved)
+    }
+
+    private fun restoreIfUntouched(manager: AudioManager, saved: Int) {
+        try {
+            val max = manager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
+            // if the user changed the volume while the alarm rang, their choice stays
+            if (manager.getStreamVolume(AudioManager.STREAM_ALARM) == max) {
+                manager.setStreamVolume(AudioManager.STREAM_ALARM, saved, 0)
+            }
+        } catch (e: SecurityException) {
+            Log.w(TAG, "Cannot restore alarm volume: ${e.javaClass.simpleName}")
+        }
     }
 
     private fun releaseQuietly(player: MediaPlayer) {
@@ -215,5 +269,7 @@ class AlarmPlaybackController(
 
     private companion object {
         const val TAG = "AlarmPlayback"
+        const val PREFS = "alarm_playback"
+        const val KEY_SAVED_VOLUME = "restore_alarm_volume"
     }
 }

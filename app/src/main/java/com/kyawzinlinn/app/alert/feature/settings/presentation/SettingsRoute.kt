@@ -13,6 +13,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyawzinlinn.app.alert.core.permissions.SystemSettingsIntents
 import com.kyawzinlinn.app.alert.core.permissions.startSettingsIntent
+import com.kyawzinlinn.app.alert.feature.update.presentation.UpdateAction
+import com.kyawzinlinn.app.alert.feature.update.presentation.UpdateViewModel
+import com.kyawzinlinn.app.alert.feature.update.presentation.startUpdateInstall
 
 @Composable
 fun SettingsRoute(
@@ -22,6 +25,8 @@ fun SettingsRoute(
 ) {
     val viewModel: SettingsViewModel = viewModel(factory = factory)
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val updateViewModel: UpdateViewModel = viewModel(factory = factory)
+    val updateState by updateViewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val postNotificationsLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         viewModel.onAction(SettingsAction.RefreshPermissions)
@@ -48,6 +53,11 @@ fun SettingsRoute(
             context.startSettingsIntent(
                 SystemSettingsIntents.batteryOptimizationSettings(), SystemSettingsIntents.appDetails(context),
             )
+        },
+        updateState = updateState,
+        onUpdateAction = updateViewModel::onAction,
+        onInstallUpdate = { path ->
+            context.startUpdateInstall(path)?.let { updateViewModel.onAction(UpdateAction.InstallNotStarted(it)) }
         },
         modifier = modifier,
     )

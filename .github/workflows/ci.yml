@@ -116,7 +116,12 @@ jobs:
           APK=$(ls dist/*.apk | head -n 1)
           cp "$APK" "dist/app-alert-$TAG.apk"
 
-          gh release create "$TAG" "dist/app-alert-$TAG.apk" \
+          # read by the in-app updater
+          SHA=$(sha256sum "dist/app-alert-$TAG.apk" | cut -d' ' -f1)
+          printf '{"versionCode":%s,"versionName":"1.0.%s","apk":"app-alert-%s.apk","sha256":"%s"}\n' \
+            "${{ github.run_number }}" "${{ github.run_number }}" "$TAG" "$SHA" > dist/update.json
+
+          gh release create "$TAG" "dist/app-alert-$TAG.apk" dist/update.json \
             --target "${{ github.sha }}" \
             --latest \
             --title "App Alert $TAG" \

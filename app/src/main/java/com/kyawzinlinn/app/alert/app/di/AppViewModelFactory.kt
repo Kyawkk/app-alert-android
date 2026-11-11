@@ -11,6 +11,7 @@ import com.kyawzinlinn.app.alert.feature.dashboard.presentation.DashboardViewMod
 import com.kyawzinlinn.app.alert.feature.history.presentation.HistoryViewModel
 import com.kyawzinlinn.app.alert.feature.onboarding.presentation.OnboardingViewModel
 import com.kyawzinlinn.app.alert.feature.settings.presentation.SettingsViewModel
+import com.kyawzinlinn.app.alert.feature.update.presentation.UpdateViewModel
 
 class AppViewModelFactory(
     private val container: AppContainer,
@@ -49,6 +50,8 @@ class AppViewModelFactory(
                 HistoryViewModel(getNotificationHistory, getAppLabel, clearHistory)
             modelClass.isAssignableFrom(SettingsViewModel::class.java) ->
                 SettingsViewModel(observeAppSettings, permissionStatusSource, updateQuietHours, setThemeMode)
+            modelClass.isAssignableFrom(UpdateViewModel::class.java) ->
+                UpdateViewModel(checkForUpdate, downloadUpdate, installedVersionName)
             modelClass.isAssignableFrom(OnboardingViewModel::class.java) ->
                 OnboardingViewModel(permissionStatusSource, observeSelectedApplications, completeOnboarding)
             else -> throw IllegalArgumentException("Unknown ViewModel: ${modelClass.name}")

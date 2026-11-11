@@ -1,6 +1,6 @@
 # App Alert
 
-An Android app that plays an alarm when a notification arrives from apps you pick, for the times you can't watch your phone. Everything stays on the device. Message text is only read to apply your filters and is never stored or logged.
+An Android app that plays an alarm when a notification arrives from apps you pick, for the times you can't watch your phone. Your notifications stay on the device. Message text is only read to apply your filters and is never stored or logged. The only network use is the update check you start yourself in Settings.
 
 Kotlin, Jetpack Compose, Material 3, minSdk 24.
 
@@ -105,8 +105,18 @@ Each screen has a `UiState`, an `Action`, a `ViewModel`, a stateless `Screen` an
 | Do Not Disturb access | Let you allow alarms in DND | No |
 | Unrestricted battery use | More reliable on aggressive OEMs | No |
 | `VIBRATE` | Vibration | No |
+| `INTERNET` | Check GitHub Releases and download an update, only when you tap "Check for updates" | No |
+| `REQUEST_INSTALL_PACKAGES` | Hand a downloaded update to the Android installer | No |
 
 No `QUERY_ALL_PACKAGES` and no storage permission (custom sounds use the document picker).
+
+## Updates
+
+Settings > Updates > Check for updates asks the GitHub Releases API for the latest release, downloads its APK, and opens the Android installer. Nothing is checked in the background and nothing about you or your alerts is sent.
+
+Before the installer opens the app verifies that the download matches the SHA-256 in the release's `update.json`, that it is this app (same package name and version code), and that it is signed with the same key as the installed one. Android still asks you to confirm every install and only accepts an update signed with the key of the installed app. If you installed a build signed with a different key (for example a throwaway CI key), uninstall once and install the new release.
+
+Releases published before `update.json` existed are ignored by the updater. Pre-releases are never offered. Google Play restricts `REQUEST_INSTALL_PACKAGES`, so remove the update feature before publishing there.
 
 ## Releasing
 
@@ -127,7 +137,7 @@ keytool -genkeypair -v -keystore release.jks -alias appalert \
 base64 -w0 release.jks
 ```
 
-Add these repository secrets: `SIGNING_KEYSTORE_BASE64`, `SIGNING_STORE_PASSWORD`, `SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD`. Never commit the keystore. Keep each release's `mapping.txt` to decode crash traces.
+Add these repository secrets: `SIGNING_KEYSTORE_BASE64`, `SIGNING_STORE_PASSWORD`, `SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD`. In-app updates only work between builds signed with the same key, so set them before relying on updates. Every release also carries an `update.json` (version code, APK name, SHA-256) that the updater reads. Never commit the keystore. Keep each release's `mapping.txt` to decode crash traces.
 
 ## Troubleshooting
 

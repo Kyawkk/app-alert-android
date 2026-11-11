@@ -9,6 +9,7 @@ sealed class NavigationDestination(val route: String) {
     data object History : NavigationDestination("history")
     data object Settings : NavigationDestination("settings")
     data object AlarmConfig : NavigationDestination("alarm")
+    data object Changelog : NavigationDestination("changelog")
 
     data object AppDetail : NavigationDestination("applications/{packageName}") {
         const val ARG_PACKAGE = "packageName"

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButton
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButtonStyle
@@ -42,7 +43,7 @@ fun UpdateSection(
                     "Checking...", {}, buttonModifier, AppAlertButtonStyle.Tonal, enabled = false,
                 )
                 is UpdateStatus.Available -> {
-                    val notes = ChangelogParser.parseSections(status.info.notes)
+                    val notes = remember(status.info.notes) { ChangelogParser.parseSections(status.info.notes) }
                     if (notes.isNotEmpty()) ChangelogSections(notes, Modifier.padding(top = Spacing.sm))
                     AppAlertButton(
                         "Download ${status.info.versionName}", { onAction(UpdateAction.Download) }, buttonModifier,

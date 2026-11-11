@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -68,16 +69,20 @@ private val Scoped = Regex("^([a-z][\\w-]*): (.+)$")
 @Composable
 private fun ChangeItem(text: String) {
     val colors = MaterialTheme.colorScheme
-    val match = Scoped.find(text)
-    val styled = buildAnnotatedString {
-        if (match != null) {
-            withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = colors.onSurface)) {
-                append(match.groupValues[1])
+    val scopeColor = colors.onSurface
+    // built once per entry instead of on every recomposition
+    val styled = remember(text, scopeColor) {
+        val match = Scoped.find(text)
+        buildAnnotatedString {
+            if (match != null) {
+                withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = scopeColor)) {
+                    append(match.groupValues[1])
+                }
+                append(": ")
+                append(match.groupValues[2].replaceFirstChar { it.uppercase() })
+            } else {
+                append(text.replaceFirstChar { it.uppercase() })
             }
-            append(": ")
-            append(match.groupValues[2].replaceFirstChar { it.uppercase() })
-        } else {
-            append(text.replaceFirstChar { it.uppercase() })
         }
     }
     Row(horizontalArrangement = Arrangement.spacedBy(Spacing.xs)) {

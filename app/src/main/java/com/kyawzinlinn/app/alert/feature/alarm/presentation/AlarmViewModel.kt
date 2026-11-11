@@ -32,6 +32,7 @@ class AlarmViewModel(
     private data class Transient(val soundRejected: Boolean = false, val failure: AlarmFailure? = null)
 
     private val transient = MutableStateFlow(Transient())
+    private var cachedTitle: Pair<String?, String>? = null
 
     val uiState: StateFlow<AlarmUiState> = combine(
         observeAlarmSettings(), observeAlarmPlaybackState(), transient,
@@ -39,7 +40,7 @@ class AlarmViewModel(
         AlarmUiState(
             isLoading = false,
             settings = settings,
-            soundTitle = getSoundTitle(settings.soundUri),
+            soundTitle = soundTitleFor(settings.soundUri),
             isPlaying = playing,
             soundRejected = extra.soundRejected,
             playbackFailure = extra.failure,
@@ -69,6 +70,12 @@ class AlarmViewModel(
             }
             AlarmAction.StopAlarm -> stopAlarmPlayback()
         }
+    }
+
+    // moving a slider changes the settings but not the sound, so its title is not looked up again
+    private suspend fun soundTitleFor(uri: String?): String {
+        cachedTitle?.takeIf { it.first == uri }?.let { return it.second }
+        return getSoundTitle(uri).also { cachedTitle = uri to it }
     }
 
     private fun update(transform: (AlarmSettings) -> AlarmSettings) {

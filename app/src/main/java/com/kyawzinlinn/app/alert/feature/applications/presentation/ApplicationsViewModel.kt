@@ -14,12 +14,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 
 class ApplicationsViewModel(
     private val getInstalledApplications: GetInstalledApplicationsUseCase,
-    observeSelectedApplications: ObserveSelectedApplicationsUseCase,
+    private val observeSelectedApplications: ObserveSelectedApplicationsUseCase,
     private val updateApplicationSelection: UpdateApplicationSelectionUseCase,
 ) : ViewModel() {
 
@@ -32,9 +33,14 @@ class ApplicationsViewModel(
     private val installed = MutableStateFlow<Installed>(Installed.Loading)
     private val query = MutableStateFlow("")
 
+    // Apps that were monitored when the screen opened are listed first. The order is fixed from then on,
+    // so switching an app on or off changes its row in place instead of moving it and sliding the list.
+    private val pinned = MutableStateFlow<Set<String>?>(null)
+
     val uiState: StateFlow<ApplicationsUiState> = combine(
-        installed, query, observeSelectedApplications(),
-    ) { installedState, q, rules ->
+        installed, query, observeSelectedApplications(), pinned,
+    ) { installedState, q, rules, pinnedFirst ->
+        if (pinnedFirst == null) return@combine ApplicationsUiState(isLoading = true, query = q)
         when (installedState) {
             Installed.Loading -> ApplicationsUiState(isLoading = true, query = q)
             Installed.Failed -> ApplicationsUiState(isLoading = false, loadFailed = true, query = q)
@@ -44,7 +50,7 @@ class ApplicationsViewModel(
                 val visible = installedState.apps
                     .filter { trimmed.isEmpty() || it.label.contains(trimmed, ignoreCase = true) }
                     .map { ApplicationItemUiModel(it.packageName, it.label, it.packageName in selected) }
-                    .sortedByDescending { it.isSelected }
+                    .sortedByDescending { it.packageName in pinnedFirst }
                 ApplicationsUiState(
                     isLoading = false,
                     query = q,
@@ -58,6 +64,7 @@ class ApplicationsViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ApplicationsUiState())
 
     init {
+        pinSelectedApps()
         load()
     }
 
@@ -68,6 +75,18 @@ class ApplicationsViewModel(
                 viewModelScope.launchCatching { updateApplicationSelection(action.packageName, action.selected) }
             ApplicationsAction.Retry -> load()
             ApplicationsAction.Refresh -> refresh()
+        }
+    }
+
+    private fun pinSelectedApps() {
+        viewModelScope.launchCatching {
+            pinned.value = try {
+                observeSelectedApplications().first().mapTo(HashSet()) { it.packageName }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                emptySet() // the order is only cosmetic, so a read failure must not leave the list loading
+            }
         }
     }
 

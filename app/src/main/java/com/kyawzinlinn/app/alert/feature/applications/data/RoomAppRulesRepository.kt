@@ -43,7 +43,7 @@ class RoomAppRulesRepository(
     override fun isSelectedOrNull(packageName: String): Boolean? =
         snapshot.value?.containsKey(packageName)
 
-    override suspend fun upsert(rule: AppRule) = dao.upsert(rule.toEntity())
+    override suspend fun upsert(rule: AppRule) = writeMutex.withLock { dao.upsert(rule.toEntity()) }
 
     override suspend fun update(packageName: String, transform: (AppRule) -> AppRule) {
         writeMutex.withLock {
@@ -52,7 +52,7 @@ class RoomAppRulesRepository(
         }
     }
 
-    override suspend fun remove(packageName: String) = dao.delete(packageName)
+    override suspend fun remove(packageName: String) = writeMutex.withLock { dao.delete(packageName) }
 }
 
 private const val SEPARATOR = "\n"

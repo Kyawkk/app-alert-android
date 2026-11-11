@@ -1,6 +1,7 @@
 package com.kyawzinlinn.app.alert.core.designsystem.components
 
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +28,7 @@ fun AppAlertTextField(
     supportingText: String? = null,
     singleLine: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     shape: Shape = if (singleLine) CircleShape else MaterialTheme.shapes.large,
 ) {
     TextField(
@@ -40,6 +42,7 @@ fun AppAlertTextField(
         supportingText = supportingText?.let { { Text(it) } },
         singleLine = singleLine,
         keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
         shape = shape,
         colors = TextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,

@@ -32,7 +32,8 @@ fun VolumeAndDurationCard(
             onValueChangeFinished = { onAction(AlarmAction.VolumeChanged(it)) },
         )
         AppAlertSupportingText(
-            "Relative to your phone's alarm volume. App Alert never changes the system volume.",
+            "100% is the loudest your phone can play. While an alarm rings, App Alert raises the alarm volume to the " +
+                "maximum and puts it back when the alarm stops.",
             style = MaterialTheme.typography.bodySmall,
         )
         AppAlertSlider(

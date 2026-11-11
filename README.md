@@ -60,7 +60,7 @@ NotificationListenerService      builds a NotificationEvent, ignores unselected 
 
 - Apps are identified by package name.
 - Duplicate and cooldown state is kept in memory. After a restart the worst case is one extra alarm, never a missed one.
-- Volume is relative to the device's alarm volume. System volume is never changed.
+- 100% volume is the loudest the device can play. While an alarm rings, the alarm stream is raised to its maximum and restored when the alarm stops (also after a crash, on the next start). Other volumes are never touched.
 - Every alarm has a bounded length and can be stopped from the app or its notification.
 
 ## Performance

@@ -7,6 +7,7 @@ Generated from commit messages by `scripts/changelog.py`. Only features, fixes, 
 ### Added
 
 - **update:** check and install updates from GitHub Releases
+- **release:** generate release notes and changelog from commits
 
 ## 1.0.20 - 2026-11-11
 

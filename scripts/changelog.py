@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Builds release notes from conventional commit messages.
 
-  scripts/changelog.py                      rewrite CHANGELOG.md from every v* tag
+  scripts/changelog.py                      rewrite CHANGELOG.md (and the copy the app ships) from every v* tag
   scripts/changelog.py --notes [FROM [TO]]  print the notes for FROM..TO (defaults: latest tag..HEAD)
 
 Only feat, fix, perf and refactor commits are listed. docs, ci, chore, test, build and
@@ -15,6 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT = ROOT / "CHANGELOG.md"
+APP_COPY = ROOT / "app" / "src" / "main" / "assets" / "changelog.md"
 SECTIONS = [("feat", "Added"), ("fix", "Fixed"), ("perf", "Performance"), ("refactor", "Changed")]
 COMMIT = re.compile(r"^(\w+)(?:\(([^)]+)\))?!?: (.+)$")
 
@@ -85,8 +86,11 @@ def main():
     elif args:
         sys.exit(__doc__)
     else:
-        OUTPUT.write_text(changelog())
-        print(f"Wrote {OUTPUT.name} with {len(tags())} version(s)")
+        text = changelog()
+        APP_COPY.parent.mkdir(parents=True, exist_ok=True)
+        for target in (OUTPUT, APP_COPY):
+            target.write_text(text)
+        print(f"Wrote {OUTPUT.name} and {APP_COPY.relative_to(ROOT)} with {len(tags())} version(s)")
 
 
 if __name__ == "__main__":

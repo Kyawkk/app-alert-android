@@ -7,6 +7,7 @@ data class UpdateInfo(
     val apkSizeBytes: Long,
     val sha256: String,
     val releaseUrl: String,
+    val notes: String = "",
 )
 
 enum class UpdateFailure {

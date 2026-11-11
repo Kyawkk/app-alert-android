@@ -13,6 +13,7 @@ import com.kyawzinlinn.app.alert.app.di.AppViewModelFactory
 import com.kyawzinlinn.app.alert.feature.alarm.presentation.AlarmRoute
 import com.kyawzinlinn.app.alert.feature.applications.presentation.AppRuleDetailRoute
 import com.kyawzinlinn.app.alert.feature.applications.presentation.ApplicationsRoute
+import com.kyawzinlinn.app.alert.feature.changelog.presentation.ChangelogRoute
 import com.kyawzinlinn.app.alert.feature.dashboard.presentation.DashboardRoute
 import com.kyawzinlinn.app.alert.feature.history.presentation.HistoryRoute
 import com.kyawzinlinn.app.alert.feature.onboarding.presentation.OnboardingRoute
@@ -79,7 +80,11 @@ fun AppNavHost(
             SettingsRoute(
                 factory = factory,
                 onOpenAlarmSettings = { navController.navigate(NavigationDestination.AlarmConfig.route) },
+                onOpenChangelog = { navController.navigate(NavigationDestination.Changelog.route) },
             )
+        }
+        composable(NavigationDestination.Changelog.route) {
+            ChangelogRoute(factory = factory, onBack = { navController.popBackStack() }, modifier = detailBackground)
         }
         composable(NavigationDestination.AlarmConfig.route) {
             AlarmRoute(factory = factory, onBack = { navController.popBackStack() }, modifier = detailBackground)

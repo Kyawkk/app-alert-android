@@ -21,6 +21,7 @@ import com.kyawzinlinn.app.alert.feature.update.presentation.startUpdateInstall
 fun SettingsRoute(
     factory: ViewModelProvider.Factory,
     onOpenAlarmSettings: () -> Unit,
+    onOpenChangelog: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: SettingsViewModel = viewModel(factory = factory)
@@ -55,6 +56,7 @@ fun SettingsRoute(
             )
         },
         updateState = updateState,
+        onOpenChangelog = onOpenChangelog,
         onUpdateAction = updateViewModel::onAction,
         onInstallUpdate = { path ->
             context.startUpdateInstall(path)?.let { updateViewModel.onAction(UpdateAction.InstallNotStarted(it)) }

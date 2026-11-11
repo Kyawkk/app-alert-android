@@ -15,6 +15,8 @@ import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertSupporting
 import com.kyawzinlinn.app.alert.core.designsystem.preview.AppAlertPreviews
 import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
+import com.kyawzinlinn.app.alert.feature.changelog.domain.ChangelogParser
+import com.kyawzinlinn.app.alert.feature.changelog.presentation.components.ChangelogSections
 import com.kyawzinlinn.app.alert.feature.update.domain.UpdateFailure
 import com.kyawzinlinn.app.alert.feature.update.domain.UpdateInfo
 import com.kyawzinlinn.app.alert.feature.update.presentation.UpdateAction
@@ -39,9 +41,13 @@ fun UpdateSection(
                 UpdateStatus.Checking -> AppAlertButton(
                     "Checking...", {}, buttonModifier, AppAlertButtonStyle.Tonal, enabled = false,
                 )
-                is UpdateStatus.Available -> AppAlertButton(
-                    "Download ${status.info.versionName}", { onAction(UpdateAction.Download) }, buttonModifier,
-                )
+                is UpdateStatus.Available -> {
+                    val notes = ChangelogParser.parseSections(status.info.notes)
+                    if (notes.isNotEmpty()) ChangelogSections(notes, Modifier.padding(top = Spacing.sm))
+                    AppAlertButton(
+                        "Download ${status.info.versionName}", { onAction(UpdateAction.Download) }, buttonModifier,
+                    )
+                }
                 is UpdateStatus.Downloading -> {
                     LinearProgressIndicator(
                         progress = { status.progress },

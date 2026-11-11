@@ -36,6 +36,8 @@ import com.kyawzinlinn.app.alert.feature.applications.domain.InstalledAppsReposi
 import com.kyawzinlinn.app.alert.feature.applications.domain.ObserveSelectedApplicationsUseCase
 import com.kyawzinlinn.app.alert.feature.applications.domain.UpdateAppRuleUseCase
 import com.kyawzinlinn.app.alert.feature.applications.domain.UpdateApplicationSelectionUseCase
+import com.kyawzinlinn.app.alert.feature.changelog.data.AssetChangelogRepository
+import com.kyawzinlinn.app.alert.feature.changelog.domain.GetChangelogUseCase
 import com.kyawzinlinn.app.alert.feature.dashboard.domain.ObserveMonitoringStatusUseCase
 import com.kyawzinlinn.app.alert.feature.history.data.RoomAlertHistoryRepository
 import com.kyawzinlinn.app.alert.feature.history.domain.AlertHistoryRepository
@@ -109,6 +111,8 @@ class AppContainer(context: Context) {
             settingsRepository, appRulesRepository, permissionStatusSource, listenerConnection, timeProvider,
         )
     }
+
+    val getChangelog by lazy { GetChangelogUseCase(AssetChangelogRepository(appContext)) }
 
     private val installedVersion = InstalledVersion(appContext)
     val installedVersionName: String get() = installedVersion.name

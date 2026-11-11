@@ -21,6 +21,7 @@ import com.kyawzinlinn.app.alert.feature.settings.domain.QuietHours
 import com.kyawzinlinn.app.alert.feature.settings.presentation.components.AppearanceCard
 import com.kyawzinlinn.app.alert.feature.settings.presentation.components.PermissionsSection
 import com.kyawzinlinn.app.alert.feature.settings.presentation.components.QuietHoursCard
+import com.kyawzinlinn.app.alert.feature.changelog.presentation.components.ChangelogSettingsSection
 import com.kyawzinlinn.app.alert.feature.update.presentation.UpdateAction
 import com.kyawzinlinn.app.alert.feature.update.presentation.UpdateUiState
 import com.kyawzinlinn.app.alert.feature.update.presentation.components.UpdateSection
@@ -35,6 +36,7 @@ fun SettingsScreen(
     onOpenDndAccess: () -> Unit,
     onOpenBatterySettings: () -> Unit,
     updateState: UpdateUiState,
+    onOpenChangelog: () -> Unit,
     onUpdateAction: (UpdateAction) -> Unit,
     onInstallUpdate: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -69,6 +71,7 @@ fun SettingsScreen(
                     onOpenBatterySettings = onOpenBatterySettings,
                 )
                 UpdateSection(updateState, onUpdateAction, onInstallUpdate, Modifier.entrance(4))
+                ChangelogSettingsSection(onOpenChangelog, Modifier.entrance(5))
             }
         }
     }
@@ -80,7 +83,7 @@ private fun SettingsScreenPreview() {
     AppAlertTheme {
         SettingsScreen(
             SettingsUiState(false, QuietHours(enabled = true), PermissionState(notificationAccessGranted = true)),
-            {}, {}, {}, {}, {}, {}, UpdateUiState("1.0.0"), {}, {},
+            {}, {}, {}, {}, {}, {}, UpdateUiState("1.0.0"), {}, {}, {},
         )
     }
 }

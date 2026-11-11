@@ -6,7 +6,7 @@ import org.json.JSONObject
 
 internal data class ReleaseAsset(val name: String, val url: String, val sizeBytes: Long)
 
-internal data class LatestRelease(val pageUrl: String, val assets: List<ReleaseAsset>) {
+internal data class LatestRelease(val pageUrl: String, val assets: List<ReleaseAsset>, val notes: String = "") {
     fun asset(name: String): ReleaseAsset? = assets.firstOrNull { it.name == name }
 }
 
@@ -19,6 +19,7 @@ internal object GitHubReleaseParser {
         val assets = json.getJSONArray("assets")
         LatestRelease(
             pageUrl = json.optString("html_url"),
+            notes = json.optString("body"),
             assets = (0 until assets.length()).map { index ->
                 val asset = assets.getJSONObject(index)
                 ReleaseAsset(
@@ -52,6 +53,7 @@ internal object GitHubReleaseParser {
                 apkSizeBytes = apk.sizeBytes,
                 sha256 = sha256.lowercase(),
                 releaseUrl = release.pageUrl,
+                notes = release.notes,
             )
         }
     } catch (e: JSONException) {

@@ -127,7 +127,7 @@ git tag v1.0.0
 git push origin v1.0.0
 ```
 
-Release notes come from the commit messages (`feat`, `fix`, `perf`, `refactor` are listed; `docs`, `ci` and `chore` are not), and every version is also listed in [CHANGELOG.md](CHANGELOG.md). After a release, refresh it with `python3 scripts/changelog.py`.
+Release notes come from the commit messages (`feat`, `fix`, `perf`, `refactor` are listed; `docs`, `ci` and `chore` are not), and every version is also listed in [CHANGELOG.md](CHANGELOG.md). After a release, refresh it with `python3 scripts/changelog.py`; this also updates the copy shown in Settings > What's new. A build can only list versions tagged before it, so the newest release appears in the app one release later, and on the update card before it is installed.
 
 Tags with a suffix like `v1.1.0-beta1` become pre-releases. Without signing secrets the release is signed with a throwaway test key and marked as a pre-release.
 

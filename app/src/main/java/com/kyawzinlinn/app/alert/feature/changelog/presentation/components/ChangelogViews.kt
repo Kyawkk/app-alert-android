@@ -24,9 +24,12 @@ import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertCard
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertCardHeader
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertSection
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertSupportingText
+import com.kyawzinlinn.app.alert.core.designsystem.preview.AppAlertPreviews
+import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 import com.kyawzinlinn.app.alert.feature.changelog.domain.ChangelogSection
 import com.kyawzinlinn.app.alert.feature.changelog.domain.ChangelogVersion
+import com.kyawzinlinn.app.alert.feature.changelog.presentation.ChangelogPreviewData
 
 /** A small rounded label. */
 @Composable
@@ -156,3 +159,42 @@ fun changeSummary(version: ChangelogVersion): String =
     } else {
         version.sections.joinToString(" · ") { "${it.items.size} ${it.title.lowercase()}" }
     }
+
+@AppAlertPreviews
+@Composable
+private fun ChangelogTagsPreview() {
+    AppAlertTheme {
+        Column(Modifier.padding(Spacing.md), verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+            ChangelogSections(ChangelogPreviewData.rich.sections)
+            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                VersionBadges(latest = true, installed = false)
+                VersionBadges(latest = false, installed = true)
+                VersionBadges(latest = true, installed = true)
+            }
+        }
+    }
+}
+
+@AppAlertPreviews
+@Composable
+private fun ChangelogSettingsSectionPreview() {
+    AppAlertTheme { ChangelogSettingsSection(onOpen = {}, modifier = Modifier.padding(Spacing.md)) }
+}
+
+@AppAlertPreviews
+@Composable
+private fun ChangelogVersionDetailPreview() {
+    AppAlertTheme {
+        Column(Modifier.padding(Spacing.md), verticalArrangement = Arrangement.spacedBy(Spacing.md)) {
+            AppAlertCard {
+                ChangelogVersionDetail(ChangelogPreviewData.rich, latest = true, installed = false, onOpenRelease = {})
+            }
+            AppAlertCard {
+                ChangelogVersionDetail(ChangelogPreviewData.longEntry, latest = false, installed = true, onOpenRelease = {})
+            }
+            AppAlertCard {
+                ChangelogVersionDetail(ChangelogPreviewData.empty, latest = false, installed = false, onOpenRelease = {})
+            }
+        }
+    }
+}

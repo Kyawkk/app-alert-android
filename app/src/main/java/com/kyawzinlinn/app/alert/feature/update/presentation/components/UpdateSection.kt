@@ -104,13 +104,54 @@ internal fun failureMessage(reason: UpdateFailure): String = when (reason) {
     UpdateFailure.NO_INSTALLER -> "No installer is available on this device."
 }
 
-@AppAlertPreviews
+private val previewInfo = UpdateInfo(
+    versionCode = 12,
+    versionName = "1.0.12",
+    apkUrl = "https://example.com/app-alert.apk",
+    apkSizeBytes = 2_000_000,
+    sha256 = "0".repeat(64),
+    releaseUrl = "https://example.com",
+    notes = "### Added\n\n- **update:** check and install updates\n\n### Fixed\n\n- **alarm:** play at full volume",
+)
+
 @Composable
-private fun UpdateSectionPreview() {
+private fun UpdatePreview(status: UpdateStatus) {
     AppAlertTheme {
-        val info = UpdateInfo(12, "1.0.12", "https://example.com/a.apk", 2_000_000, "0".repeat(64), "https://example.com")
-        UpdateSection(
-            UpdateUiState("1.0.11", UpdateStatus.Available(info)), {}, {}, Modifier.padding(Spacing.md),
-        )
+        UpdateSection(UpdateUiState("1.0.11", status), {}, {}, Modifier.padding(Spacing.md))
     }
 }
+
+@AppAlertPreviews
+@Composable
+private fun UpdateSectionIdlePreview() = UpdatePreview(UpdateStatus.Idle)
+
+@AppAlertPreviews
+@Composable
+private fun UpdateSectionCheckingPreview() = UpdatePreview(UpdateStatus.Checking)
+
+@AppAlertPreviews
+@Composable
+private fun UpdateSectionUpToDatePreview() = UpdatePreview(UpdateStatus.UpToDate)
+
+@AppAlertPreviews
+@Composable
+private fun UpdateSectionAvailablePreview() = UpdatePreview(UpdateStatus.Available(previewInfo))
+
+@AppAlertPreviews
+@Composable
+private fun UpdateSectionDownloadingPreview() = UpdatePreview(UpdateStatus.Downloading(previewInfo, 0.42f))
+
+@AppAlertPreviews
+@Composable
+private fun UpdateSectionReadyPreview() =
+    UpdatePreview(UpdateStatus.ReadyToInstall(previewInfo, "/cache/updates/app.apk"))
+
+@AppAlertPreviews
+@Composable
+private fun UpdateSectionInstallBlockedPreview() = UpdatePreview(
+    UpdateStatus.ReadyToInstall(previewInfo, "/cache/updates/app.apk", UpdateFailure.INSTALL_NOT_ALLOWED),
+)
+
+@AppAlertPreviews
+@Composable
+private fun UpdateSectionFailedPreview() = UpdatePreview(UpdateStatus.Failed(UpdateFailure.WRONG_SIGNATURE))

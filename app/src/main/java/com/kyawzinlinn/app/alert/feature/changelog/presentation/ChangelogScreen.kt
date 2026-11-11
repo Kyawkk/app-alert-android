@@ -30,8 +30,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import android.content.res.Configuration
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButton
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertButtonStyle
@@ -46,7 +48,6 @@ import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 import com.kyawzinlinn.app.alert.core.ui.WindowWidth
 import com.kyawzinlinn.app.alert.core.ui.rememberWindowWidth
-import com.kyawzinlinn.app.alert.feature.changelog.domain.ChangelogSection
 import com.kyawzinlinn.app.alert.feature.changelog.domain.ChangelogVersion
 import com.kyawzinlinn.app.alert.feature.changelog.presentation.components.ChangelogVersionDetail
 import com.kyawzinlinn.app.alert.feature.changelog.presentation.components.VersionBadges
@@ -282,20 +283,56 @@ private fun VersionRow(
     }
 }
 
-private val previewVersions = listOf(
-    ChangelogVersion(
-        "1.0.19", "2026-11-12",
-        listOf(
-            ChangelogSection("Added", listOf("update: check and install updates from GitHub Releases")),
-            ChangelogSection("Fixed", listOf("build: stop repackaging classes", "plain entry")),
-        ),
-    ),
-    ChangelogVersion("1.0.18", "2026-11-11", emptyList()),
-    ChangelogVersion("1.0.17", "2026-11-11", listOf(ChangelogSection("Performance", listOf("ui: smoother list scrolling")))),
-)
+private const val TABLET = "spec:width=1280dp,height=800dp,dpi=240"
 
 @AppAlertPreviews
 @Composable
 private fun ChangelogScreenPreview() {
-    AppAlertTheme { ChangelogScreen(previewVersions, "1.0.17", null, {}, {}, {}) }
+    AppAlertTheme {
+        ChangelogScreen(ChangelogPreviewData.versions, ChangelogPreviewData.INSTALLED, null, {}, {}, {})
+    }
+}
+
+@AppAlertPreviews
+@Composable
+private fun ChangelogScreenEmptyPreview() {
+    AppAlertTheme { ChangelogScreen(emptyList(), "", null, {}, {}, {}) }
+}
+
+@Preview(name = "Tablet", device = TABLET, showBackground = true)
+@Preview(name = "Tablet dark", device = TABLET, showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ChangelogScreenTabletPreview() {
+    AppAlertTheme {
+        ChangelogScreen(
+            ChangelogPreviewData.versions, ChangelogPreviewData.INSTALLED, ChangelogPreviewData.rich.version,
+            {}, {}, {},
+        )
+    }
+}
+
+@AppAlertPreviews
+@Composable
+private fun VersionRowPreview() {
+    AppAlertTheme {
+        Column(Modifier.padding(Spacing.md), verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+            VersionRow(ChangelogPreviewData.rich, selected = true, latest = true, installed = false, onSelect = {})
+            VersionRow(ChangelogPreviewData.empty, selected = false, latest = false, installed = true, onSelect = {})
+        }
+    }
+}
+
+@AppAlertPreviews
+@Composable
+private fun TimelineItemPreview() {
+    AppAlertTheme {
+        Column(Modifier.padding(Spacing.md)) {
+            TimelineItem(isLast = false, highlighted = true) {
+                AppAlertCard { Text("Installed version") }
+            }
+            TimelineItem(isLast = true, highlighted = false) {
+                AppAlertCard { Text("Older version") }
+            }
+        }
+    }
 }

@@ -63,6 +63,22 @@ NotificationListenerService      builds a NotificationEvent, ignores unselected 
 - Volume is relative to the device's alarm volume. System volume is never changed.
 - Every alarm has a bounded length and can be stopped from the app or its notification.
 
+## Performance
+
+Measured on a Lenovo TB522FU (Android 17) with the `benchmark` build type. Numbers vary by device and Android version, so treat them as a baseline to compare against, not a promise.
+
+| Area | Test | Result |
+|---|---|---|
+| Startup | Warm start, time to initial display (median of 10) | 35.9 ms |
+| UI | Switching tabs, frame CPU time P50 / P95 / P99 | 2.3 / 4.6 / 8.4 ms |
+| UI | Scrolling the Applications list, frame CPU time P50 / P95 / P99 | 3.4 / 5.7 / 7.4 ms |
+| Alarm logic | Notification from a selected app, median / P99 | 15.5 µs / 302.9 µs |
+| Alarm logic | Notification from an ignored app, median / P99 | 1.5 µs / 18.2 µs |
+
+Frame times stay well under the 16.7 ms budget for 60 fps. The alarm logic figures are from a JVM test and measure only our code; end-to-end time from notification to sound depends on Android and is measured on the device.
+
+Benchmark sources live in the `benchmark/` module and `scripts/`. See [benchmark/README.md](benchmark/README.md) for how to run them.
+
 ## Architecture
 
 One Gradle module, feature folders, dependencies pointing inward (`presentation -> domain <- data`).

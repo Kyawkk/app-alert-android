@@ -74,8 +74,12 @@ Measured on a Lenovo TB522FU (Android 17) with the `benchmark` build type. Numbe
 | UI | Scrolling the Applications list, frame CPU time P50 / P95 / P99 | 3.4 / 5.7 / 7.4 ms |
 | Alarm logic | Notification from a selected app, median / P99 | 15.5 µs / 302.9 µs |
 | Alarm logic | Notification from an ignored app, median / P99 | 1.5 µs / 18.2 µs |
+| Size | Release APK | 1.95 MB (dex 1.42 MB, native libs 0.25 MB, resources 0.14 MB) |
+| Build | Clean release build, median of 3 | 71.7 s |
+| Build | Clean debug build, median of 3 | 17.7 s |
+| Build | Debug build with nothing changed, median of 3 | 2.1 s |
 
-Frame times stay well under the 16.7 ms budget for 60 fps. The alarm logic figures are from a JVM test and measure only our code; end-to-end time from notification to sound depends on Android and is measured on the device.
+Frame times stay well under the 16.7 ms budget for 60 fps. The alarm logic figures are from a JVM test and measure only our code; end-to-end time from notification to sound depends on Android and is measured on the device. Build times were measured on a Mac and depend on the machine.
 
 Benchmark sources live in the `benchmark/` module and `scripts/`. See [benchmark/README.md](benchmark/README.md) for how to run them.
 

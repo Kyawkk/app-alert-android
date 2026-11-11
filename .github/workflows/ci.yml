@@ -101,6 +101,10 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: actions/download-artifact@v4
         with:
           name: app-release-apk
@@ -121,11 +125,13 @@ jobs:
           printf '{"versionCode":%s,"versionName":"1.0.%s","apk":"app-alert-%s.apk","sha256":"%s"}\n' \
             "${{ github.run_number }}" "${{ github.run_number }}" "$TAG" "$SHA" > dist/update.json
 
+          python3 scripts/changelog.py --notes > release-notes.md
+
           gh release create "$TAG" "dist/app-alert-$TAG.apk" dist/update.json \
             --target "${{ github.sha }}" \
             --latest \
             --title "App Alert $TAG" \
-            --generate-notes
+            --notes-file release-notes.md
 
           gh release view "$TAG" --json tagName,isDraft,isPrerelease,assets \
             --jq '{tagName, isDraft, isPrerelease, assets: [.assets[].name]}'

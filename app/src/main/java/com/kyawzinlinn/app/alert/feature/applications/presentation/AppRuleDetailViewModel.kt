@@ -13,6 +13,7 @@ import com.kyawzinlinn.app.alert.feature.alarm.domain.VerifySoundUseCase
 import com.kyawzinlinn.app.alert.feature.applications.domain.AppRule
 import com.kyawzinlinn.app.alert.feature.applications.domain.GetAppLabelUseCase
 import com.kyawzinlinn.app.alert.feature.applications.domain.KeywordScope
+import com.kyawzinlinn.app.alert.feature.applications.domain.Keywords
 import com.kyawzinlinn.app.alert.feature.applications.domain.ObserveSelectedApplicationsUseCase
 import com.kyawzinlinn.app.alert.feature.applications.domain.UpdateAppRuleUseCase
 import com.kyawzinlinn.app.alert.feature.applications.domain.UpdateApplicationSelectionUseCase
@@ -38,12 +39,10 @@ class AppRuleDetailViewModel(
 ) : ViewModel() {
 
     private data class Draft(
-        val keywords: String,
+        val keywords: List<String>,
         val scope: KeywordScope,
         val categories: Set<String>,
-    ) {
-        fun toKeywordList(): List<String> = keywords.split(',', '\n').map { it.trim() }.filter { it.isNotEmpty() }
-    }
+    )
 
     private data class Local(
         val draft: Draft? = null,
@@ -73,7 +72,7 @@ class AppRuleDetailViewModel(
                 soundTitle = if (rule.soundUri == null) "Uses the global alarm sound" else getSoundTitle(rule.soundUri),
                 soundUri = rule.soundUri,
                 soundRejected = extra.soundRejected,
-                keywordsInput = draft.keywords,
+                keywords = draft.keywords,
                 keywordScope = draft.scope,
                 categories = draft.categories,
                 filtersChanged = draft != saved,
@@ -86,7 +85,8 @@ class AppRuleDetailViewModel(
     fun onAction(action: AppRuleDetailAction) {
         when (action) {
             is AppRuleDetailAction.SetEnabled -> updateRule { it.copy(enabled = action.enabled) }
-            is AppRuleDetailAction.KeywordsChanged -> editDraft { it.copy(keywords = action.text) }
+            is AppRuleDetailAction.KeywordsAdded -> editDraft { it.copy(keywords = Keywords.add(it.keywords, action.text)) }
+            is AppRuleDetailAction.KeywordRemoved -> editDraft { it.copy(keywords = it.keywords - action.keyword) }
             is AppRuleDetailAction.ScopeChanged -> editDraft { it.copy(scope = action.scope) }
             is AppRuleDetailAction.CategoryToggled -> editDraft {
                 it.copy(
@@ -94,7 +94,7 @@ class AppRuleDetailViewModel(
                     else it.categories + action.category,
                 )
             }
-            AppRuleDetailAction.SaveFilters -> saveFilters()
+            is AppRuleDetailAction.SaveFilters -> saveFilters(action.pendingKeyword)
             is AppRuleDetailAction.SoundPicked -> pickSound(action.uri)
             AppRuleDetailAction.UseGlobalSound -> {
                 local.value = local.value.copy(soundRejected = false)
@@ -110,7 +110,7 @@ class AppRuleDetailViewModel(
         }
     }
 
-    private fun AppRule.toDraft() = Draft(keywords.joinToString(", "), keywordScope, categories)
+    private fun AppRule.toDraft() = Draft(keywords, keywordScope, categories)
 
     private fun editDraft(transform: (Draft) -> Draft) {
         viewModelScope.launchCatching {
@@ -120,11 +120,13 @@ class AppRuleDetailViewModel(
         }
     }
 
-    private fun saveFilters() {
+    private fun saveFilters(pendingKeyword: String) {
         viewModelScope.launchCatching {
-            val draft = local.value.draft ?: return@launchCatching
+            val rule = ruleFlow.first() ?: return@launchCatching
+            val draft = local.value.draft ?: rule.toDraft()
+            val keywords = Keywords.add(draft.keywords, pendingKeyword)
             updateAppRule(packageName) {
-                it.copy(keywords = draft.toKeywordList(), keywordScope = draft.scope, categories = draft.categories)
+                it.copy(keywords = keywords, keywordScope = draft.scope, categories = draft.categories)
             }
             local.value = local.value.copy(draft = null) // saved: show stored values again
         }

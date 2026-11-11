@@ -1,5 +1,10 @@
 package com.kyawzinlinn.app.alert.feature.applications.presentation
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertSupportingText
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertLoading
@@ -25,6 +30,7 @@ import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertCard
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertEmptyState
 import com.kyawzinlinn.app.alert.core.designsystem.components.AppAlertSwitchRow
 import com.kyawzinlinn.app.alert.core.designsystem.preview.AppAlertPreviews
+import com.kyawzinlinn.app.alert.core.designsystem.motion.entrance
 import com.kyawzinlinn.app.alert.core.designsystem.theme.AppAlertTheme
 import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 import com.kyawzinlinn.app.alert.core.ui.AppIcon
@@ -46,17 +52,35 @@ fun AppRuleDetailScreen(
             title = state.label.ifEmpty { "App settings" },
             onBack = onBack,
         )
-        when {
-            state.isLoading -> AppAlertLoading()
-            !state.isSelected -> AppAlertEmptyState(
-                icon = Icons.Default.Info,
-                title = "Not monitored",
-                message = "Turn this app on in the Applications list to configure it.",
-            )
-            else -> DetailContent(state, pickers, onAction, onBack)
+        val mode = when {
+            state.isLoading -> DetailMode.Loading
+            !state.isSelected -> DetailMode.NotMonitored
+            else -> DetailMode.Content
+        }
+        // loading, empty and content fade into each other instead of swapping abruptly
+        AnimatedContent(
+            targetState = mode,
+            modifier = Modifier.fillMaxSize(),
+            transitionSpec = { fadeIn(tween(FADE_IN_MILLIS, delayMillis = FADE_OUT_MILLIS)) togetherWith fadeOut(tween(FADE_OUT_MILLIS)) },
+            label = "ruleDetailMode",
+        ) { shown ->
+            when (shown) {
+                DetailMode.Loading -> AppAlertLoading()
+                DetailMode.NotMonitored -> AppAlertEmptyState(
+                    icon = Icons.Default.Info,
+                    title = "Not monitored",
+                    message = "Turn this app on in the Applications list to configure it.",
+                )
+                DetailMode.Content -> DetailContent(state, pickers, onAction, onBack)
+            }
         }
     }
 }
+
+private enum class DetailMode { Loading, NotMonitored, Content }
+
+private const val FADE_IN_MILLIS = 200
+private const val FADE_OUT_MILLIS = 90
 
 @Composable
 private fun DetailContent(
@@ -72,7 +96,7 @@ private fun DetailContent(
             .padding(horizontal = Spacing.md),
         verticalArrangement = Arrangement.spacedBy(Spacing.md),
     ) {
-        AppAlertCard {
+        AppAlertCard(Modifier.entrance(0)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
@@ -105,8 +129,9 @@ private fun DetailContent(
                 { onAction(AppRuleDetailAction.UseGlobalSound) }
             } else null,
             resetText = "Use global sound",
+            modifier = Modifier.entrance(1),
         )
-        AppAlertCard {
+        AppAlertCard(Modifier.entrance(2)) {
             state.playbackFailure?.let {
                 Text(it.userMessage(), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
             }
@@ -120,11 +145,12 @@ private fun DetailContent(
             }
         }
         NotificationFiltersCard(
-            keywords = state.keywordsInput,
+            keywords = state.keywords,
             scope = state.keywordScope,
             categories = state.categories,
             changed = state.filtersChanged,
             onAction = onAction,
+            modifier = Modifier.entrance(3),
         )
         AppAlertButton(
             "Stop monitoring this app",
@@ -146,7 +172,7 @@ private fun AppRuleDetailScreenPreview() {
         AppRuleDetailScreen(
             AppRuleDetailUiState(
                 isLoading = false, isSelected = true, packageName = "com.viber.voip", label = "Viber",
-                soundTitle = "Uses the global alarm sound", keywordsInput = "urgent",
+                soundTitle = "Uses the global alarm sound", keywords = listOf("urgent", "call"),
             ),
             SoundPickerActions({}, {}), {}, {},
         )

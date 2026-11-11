@@ -20,7 +20,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    // signing config comes from env vars; without them the release APK stays unsigned
+    // release signing comes from env vars; local builds without them fall back to the debug key so the APK installs
     val releaseKeystore = System.getenv("SIGNING_KEYSTORE_PATH")
     signingConfigs {
         if (releaseKeystore != null) {
@@ -37,15 +37,12 @@ android {
         release {
             optimization {
                 enable = true
-                packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
                 keepRules {
                     files.add(getDefaultProguardFile("proguard-android-optimize.txt"))
                     files.add(file("proguard-rules.pro"))
                 }
             }
-            if (releaseKeystore != null) {
-                signingConfig = signingConfigs.getByName("release")
-            }
+            signingConfig = signingConfigs.getByName(if (releaseKeystore != null) "release" else "debug")
         }
     }
     // english-only UI, so drop translations bundled with libraries

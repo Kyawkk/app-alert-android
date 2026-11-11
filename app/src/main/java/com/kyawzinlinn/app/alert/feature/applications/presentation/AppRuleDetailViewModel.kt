@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 
 class AppRuleDetailViewModel(
     private val packageName: String,
@@ -54,10 +55,16 @@ class AppRuleDetailViewModel(
         .map { rules -> rules.firstOrNull { it.packageName == packageName } }
     private val local = MutableStateFlow(Local())
 
+    // last stored rule, so a draft edit needs no database read and shows up in the same frame
+    @Volatile private var latestRule: AppRule? = null
+    private var cachedLabel: String? = null
+    private var cachedSound: Pair<String?, String>? = null
+
     val uiState: StateFlow<AppRuleDetailUiState> = combine(
         ruleFlow, local, observeAlarmPlaybackState(),
     ) { rule, extra, playing ->
-        val label = getAppLabel(packageName)
+        latestRule = rule
+        val label = cachedLabel ?: getAppLabel(packageName).also { cachedLabel = it }
         if (rule == null) {
             AppRuleDetailUiState(isLoading = false, isSelected = false, packageName = packageName, label = label)
         } else {
@@ -69,7 +76,7 @@ class AppRuleDetailViewModel(
                 packageName = packageName,
                 label = label,
                 enabled = rule.enabled,
-                soundTitle = if (rule.soundUri == null) "Uses the global alarm sound" else getSoundTitle(rule.soundUri),
+                soundTitle = soundTitleFor(rule.soundUri),
                 soundUri = rule.soundUri,
                 soundRejected = extra.soundRejected,
                 keywords = draft.keywords,
@@ -113,11 +120,16 @@ class AppRuleDetailViewModel(
     private fun AppRule.toDraft() = Draft(keywords, keywordScope, categories)
 
     private fun editDraft(transform: (Draft) -> Draft) {
-        viewModelScope.launchCatching {
-            val rule = ruleFlow.first() ?: return@launchCatching
-            val base = local.value.draft ?: rule.toDraft()
-            local.value = local.value.copy(draft = transform(base))
-        }
+        val rule = latestRule ?: return
+        local.update { it.copy(draft = transform(it.draft ?: rule.toDraft())) }
+    }
+
+    // the title is looked up again only when the sound itself changes, not on every filter edit
+    private suspend fun soundTitleFor(uri: String?): String {
+        cachedSound?.takeIf { it.first == uri }?.let { return it.second }
+        val title = if (uri == null) "Uses the global alarm sound" else getSoundTitle(uri)
+        cachedSound = uri to title
+        return title
     }
 
     private fun saveFilters(pendingKeyword: String) {

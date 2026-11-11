@@ -1,9 +1,14 @@
 package com.kyawzinlinn.app.alert.feature.applications.presentation.components
 
 import androidx.compose.runtime.getValue
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +38,10 @@ import com.kyawzinlinn.app.alert.core.designsystem.theme.Spacing
 import com.kyawzinlinn.app.alert.core.ui.AppIcon
 import com.kyawzinlinn.app.alert.feature.applications.presentation.ApplicationItemUiModel
 
+private const val EDIT_FADE_MILLIS = 180
+private const val EDIT_EXPAND_MILLIS = 220
+private const val EDIT_EXIT_MILLIS = 120
+
 @Composable
 fun ApplicationItem(
     app: ApplicationItemUiModel,
@@ -41,7 +50,7 @@ fun ApplicationItem(
     modifier: Modifier = Modifier,
     isHighlighted: Boolean = false,
 ) {
-    val background by animateColorAsState(
+    val background = animateColorAsState(
         targetValue = when {
             isHighlighted -> MaterialTheme.colorScheme.primaryContainer
             app.isSelected -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f)
@@ -54,7 +63,7 @@ fun ApplicationItem(
         modifier = modifier
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
-            .background(background),
+            .drawBehind { drawRect(background.value) },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ListItem(
@@ -82,7 +91,12 @@ fun ApplicationItem(
             },
             trailingContent = { AppAlertSwitch(checked = app.isSelected, onCheckedChange = null) },
         )
-        if (app.isSelected) {
+        // fades and widens in when the app is switched on, so the row does not jump
+        AnimatedVisibility(
+            visible = app.isSelected,
+            enter = fadeIn(tween(EDIT_FADE_MILLIS)) + expandHorizontally(tween(EDIT_EXPAND_MILLIS)),
+            exit = fadeOut(tween(EDIT_EXIT_MILLIS)) + shrinkHorizontally(tween(EDIT_EXPAND_MILLIS)),
+        ) {
             TextButton(onClick = onOpenDetails, modifier = Modifier.padding(end = Spacing.xs)) { Text("Edit") }
         }
     }

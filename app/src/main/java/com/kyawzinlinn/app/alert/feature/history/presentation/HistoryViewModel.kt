@@ -19,10 +19,12 @@ class HistoryViewModel(
 ) : ViewModel() {
 
     val uiState: StateFlow<HistoryUiState> = getNotificationHistory().map { records ->
+        // one lookup per app, not per row: a long history is mostly the same few apps
+        val labels = getAppLabel.forAll(records.map { it.packageName })
         HistoryUiState(
             isLoading = false,
             alerts = records.map {
-                AlertUiModel(it.id, it.packageName, getAppLabel(it.packageName), it.timestampMillis, it.outcome)
+                AlertUiModel(it.id, it.packageName, labels.getValue(it.packageName), it.timestampMillis, it.outcome)
             },
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HistoryUiState())

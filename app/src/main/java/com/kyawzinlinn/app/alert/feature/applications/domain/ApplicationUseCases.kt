@@ -33,4 +33,8 @@ class UpdateAppRuleUseCase(private val repository: AppRulesRepository) {
 
 class GetAppLabelUseCase(private val repository: InstalledAppsRepository) {
     suspend operator fun invoke(packageName: String): String = repository.labelOf(packageName)
+
+    /** Labels for a whole list, looking each package up once however often it appears. */
+    suspend fun forAll(packageNames: Collection<String>): Map<String, String> =
+        packageNames.distinct().associateWith { repository.labelOf(it) }
 }

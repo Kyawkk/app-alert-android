@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class DashboardViewModel(
@@ -36,23 +38,37 @@ class DashboardViewModel(
 
     private val alarmFailure = MutableStateFlow<AlarmFailure?>(null)
 
+    // Every section is mapped and de-duplicated on its own. A new alert does not rebuild the app list,
+    // and a theme change does not touch either, so Compose can skip the sections that did not change.
+    private val selectedApps = observeSelectedApplications().map { rules ->
+        val labels = getAppLabel.forAll(rules.map { it.packageName })
+        rules
+            .map { AppUiModel(it.packageName, labels.getValue(it.packageName)) }
+            .sortedBy { it.label.lowercase() }
+    }.distinctUntilChanged()
+
+    private val recentAlerts = getNotificationHistory(RECENT_ALERT_LIMIT).map { history ->
+        val labels = getAppLabel.forAll(history.map { it.packageName })
+        history.map {
+            AlertUiModel(it.id, it.packageName, labels.getValue(it.packageName), it.timestampMillis, it.outcome)
+        }
+    }.distinctUntilChanged()
+
+    private val monitoringEnabled = observeAppSettings().map { it.monitoringEnabled }.distinctUntilChanged()
+
     private val content = combine(
         observeMonitoringStatus(),
-        observeAppSettings(),
-        observeSelectedApplications(),
-        getNotificationHistory(RECENT_ALERT_LIMIT),
+        monitoringEnabled,
+        selectedApps,
+        recentAlerts,
         observeAlarmPlaybackState(),
-    ) { status, settings, rules, history, playing ->
+    ) { status, enabled, apps, alerts, playing ->
         DashboardUiState(
             isLoading = false,
             monitoringStatus = status,
-            isMonitoringEnabled = settings.monitoringEnabled,
-            selectedApps = rules
-                .map { AppUiModel(it.packageName, getAppLabel(it.packageName)) }
-                .sortedBy { it.label.lowercase() },
-            recentAlerts = history.map {
-                AlertUiModel(it.id, it.packageName, getAppLabel(it.packageName), it.timestampMillis, it.outcome)
-            },
+            isMonitoringEnabled = enabled,
+            selectedApps = apps,
+            recentAlerts = alerts,
             isAlarmPlaying = playing,
         )
     }

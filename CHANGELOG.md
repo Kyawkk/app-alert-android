@@ -2,12 +2,29 @@
 
 Generated from commit messages by `scripts/changelog.py`. Only features, fixes, performance work and refactors are listed.
 
-## Unreleased
+## 1.0.22 - 2026-11-12
+
+No user-facing changes.
+
+## 1.0.21 - 2026-11-12
 
 ### Added
 
 - **update:** check and install updates from GitHub Releases
 - **release:** generate release notes and changelog from commits
+- **changelog:** add changelog screen with timeline and tablet layout
+- **changelog:** add previews for changelog and update UI
+- **applications:** multi-keyword chip input and animated tablet detail pane
+
+### Fixed
+
+- **alarm:** play at the device's maximum volume when set to 100%
+- **applications:** keep list order stable on toggle and animate the edit button
+
+### Performance
+
+- **changelog:** lazy lists, drawn timeline and fewer recompositions
+- **applications:** animate keyword chips and apply filter edits instantly
 
 ## 1.0.20 - 2026-11-11
 

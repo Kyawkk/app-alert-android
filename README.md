@@ -8,13 +8,15 @@ Website: https://kyawkk.github.io/app-alert-android/
 
 ## Features
 
-- Pick which apps trigger the alarm, each with its own sound and optional keyword and category filters
+- Pick which apps trigger the alarm, each with its own sound and optional filters: several keywords (added as chips) and notification categories
 - Custom sound (system ringtone or your own audio file), volume, duration, repeats, vibration
 - Quiet hours with weekdays, including windows that cross midnight
 - Duplicate detection and a per-app cooldown
 - A monitoring status that is only "active" when Android has really bound the listener
 - Alert history (outcome only, last 30 days)
-- Phone and tablet layouts, with a System / Light / Dark theme switch (Settings > Theme)
+- In-app updates and a changelog: Settings > Check for updates, and Settings > What's new with a link to each release (only when you ask, nothing runs in the background)
+- The alarm plays at full volume even if the device volume is low, and your volume is restored afterwards
+- Phone and tablet layouts, with a two-pane app list and settings on tablets, with a System / Light / Dark theme switch (Settings > Theme)
 
 ## Screenshots
 
